@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      /* New TAPN palette (from your image) */
+      /* TAPN palette */
       --bg: #ECEBE3;           /* off-white paper */
       --panel: #FFFFFF;        /* cards/panels */
       --text: #0F1B17;         /* near-black with green bias */
@@ -22,10 +22,9 @@
       --brand: #3E7B65;        /* TAPN green */
       --brand-2: #2E5C4C;      /* darker TAPN green (shade) */
       --brand-tint: #82A99B;   /* lighter TAPN green (tint) */
-      --accent: #1044380F;     /* translucent green wash */
-      --ok: #3E7B65;           /* reuse brand for success */
-      --warn: #B0822A;         /* warm accent */
-      --danger: #B84C41;       /* desaturated red */
+      --ok: #3E7B65;
+      --warn: #B0822A;
+      --danger: #B84C41;
       --ring: rgba(62,123,101,.35);
       --radius: 18px;
       --shadow: 0 10px 30px rgba(16,32,28,.08), 0 2px 8px rgba(16,32,28,.06);
@@ -135,6 +134,10 @@
     .muted{ color: var(--muted); }
     .tag{ display:inline-block; font-size:.75rem; padding:.15rem .5rem; border:1px solid rgba(16,32,28,.14); border-radius:6px; background: rgba(62,123,101,.06); }
 
+    /* Video frame */
+    .video-frame{position:relative; border-radius:16px; overflow:hidden; border:1px solid rgba(16,32,28,.08); box-shadow:var(--shadow); background:#000; aspect-ratio:16/9;}
+    .video-frame > video{position:absolute; inset:0; width:100%; height:100%; display:block;}
+    
     @media (max-width:900px){
       .hero{ padding:5.2rem 0 2.4rem; }
       .hero-grid{ grid-template-columns:1fr; }
@@ -225,6 +228,18 @@
       </div>
     </div>
   </main>
+
+  <!-- DEMO -->
+  <section id="demo" class="container" style="padding:2rem 0 3rem;">
+    <h2 style="margin:0 0 1rem; font-size:2rem;">60-second demo</h2>
+    <div class="card video-frame">
+      <video controls preload="none" playsinline
+             controlslist="nodownload noplaybackrate" disablepictureinpicture>
+        <source src="/demo.mp4" type="video/mp4">
+        Your browser doesn’t support embedded video. <a href="/demo.mp4">Download the MP4</a>.
+      </video>
+    </div>
+  </section>
 
   <!-- FEATURES -->
   <section id="features" class="features container">
