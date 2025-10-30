@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TAPN — Focused phones for focused classrooms</title>
+  <meta name="description" content="TAPN is a digital-etiquette beacon for classrooms. Students tap in. Phones switch to focus mode. Teachers stay in control with simple, natural‑language commands." />
+  <meta property="og:title" content="TAPN — Focused phones for focused classrooms" />
+  <meta property="og:description" content="NFC tap‑in + AI policy copilot for distraction‑free learning." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/og-image.png" />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1020;          /* deep slate */
+      --panel: #0f172a;       /* slate-900 */
+      --text: #e5e7eb;        /* gray-200 */
+      --muted: #9ca3af;       /* gray-400 */
+      --brand: #60a5fa;       /* sky-400 */
+      --brand-2: #22d3ee;     /* cyan-400 */
+      --accent: #a78bfa;      /* violet-400 */
+      --ok: #34d399;          /* emerald-400 */
+      --warn: #fbbf24;        /* amber-400 */
+      --danger: #f87171;      /* red-400 */
+      --ring: rgba(96,165,250,.35);
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(2,6,23,.55), 0 2px 8px rgba(2,6,23,.4);
+    }
+    @media (prefers-color-scheme: light) {
+      :root { --bg:#f8fafc; --panel:#ffffff; --text:#0f172a; --muted:#475569; --ring:rgba(2,6,23,.12); }
+      header.nav { background: rgba(255,255,255,.8); backdrop-filter: blur(10px); }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 70% -10%, rgba(96,165,250,.15), transparent 60%),
+                  radial-gradient(800px 600px at 10% 10%, rgba(167,139,250,.18), transparent 60%),
+                  var(--bg);
+      line-height: 1.6;
+      letter-spacing: .01em;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1100px, 92vw); margin: 0 auto; }
+    .btn { display: inline-flex; align-items:center; gap:.6rem; padding:.9rem 1.15rem; border-radius: 999px; font-weight:600; border:1px solid rgba(255,255,255,.08); transition:.2s ease; box-shadow: 0 1px 0 rgba(255,255,255,.06) inset; }
+    .btn.primary{ background: linear-gradient(120deg, var(--brand), var(--brand-2)); color:#081226; }
+    .btn.ghost{ background: rgba(255,255,255,.06); }
+    .btn:hover{ transform: translateY(-2px); box-shadow: 0 8px 22px rgba(2,6,23,.45); }
+    .btn:focus-visible{ outline: 3px solid var(--ring); outline-offset: 3px; }
+    header.nav { position: sticky; top:0; z-index: 50; backdrop-filter: blur(12px); background: rgba(10,15,28,.55); border-bottom: 1px solid rgba(255,255,255,.06); }
+    .nav-inner { display:flex; align-items:center; justify-content:space-between; padding: .9rem 0; }
+    .brand { display:flex; align-items:center; gap:.7rem; font-weight:800; letter-spacing:.02em; }
+    .logo { width:34px; height:34px; border-radius:8px; background: conic-gradient(from 200deg, var(--brand), var(--brand-2), var(--accent)); box-shadow: 0 2px 14px rgba(96,165,250,.5) inset, 0 10px 30px rgba(96,165,250,.25); }
+    .nav-links { display:flex; gap:1.1rem; align-items:center; }
+    .mobile-toggle { display:none; }
+    main { display:block; }
+    .hero { padding: 7rem 0 4rem; }
+    .hero-grid { display:grid; grid-template-columns: 1.2fr .8fr; gap: 2rem; align-items:center; }
+    .badge { display:inline-flex; gap:.5rem; align-items:center; font-size:.85rem; padding:.35rem .7rem; border-radius:999px; background: rgba(99,102,241,.15); border:1px solid rgba(255,255,255,.08); }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height:1.08; margin:.6rem 0 1rem; letter-spacing:.01em; }
+    .sub { font-size: clamp(1rem, 2.1vw, 1.25rem); color: var(--muted); }
+    .cta { display:flex; gap:.8rem; flex-wrap: wrap; margin-top:1.4rem; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)); border:1px solid rgba(255,255,255,.1); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .screen { aspect-ratio: 4/3; border-radius: 16px; background: radial-gradient(600px 350px at 30% 10%, rgba(34,211,238,.25), transparent 50%),
+                               radial-gradient(500px 320px at 90% 20%, rgba(96,165,250,.25), transparent 50%),
+                               #0a0f1f; border:1px solid rgba(255,255,255,.09); position: relative; overflow: hidden; }
+    .screen::after{ content:"TAP IN"; position:absolute; inset:auto 1rem 1rem auto; font-weight:700; letter-spacing:.3rem; font-size: .85rem; color: rgba(255,255,255,.18); }
+    .screen-ui { position:absolute; inset: 0; padding: 1.1rem; display:grid; grid-template-rows: auto 1fr auto; gap:1rem; }
+    .chip { padding:.4rem .7rem; border-radius: 999px; background: rgba(34,211,238,.12); border:1px solid rgba(255,255,255,.1); font-size:.85rem; }
+    .pill { display:inline-block; padding:.35rem .6rem; border-radius:999px; background: rgba(255,255,255,.08); font-size:.8rem; }
+    .grid { display:grid; gap: 1rem; }
+    .features { padding: 3.5rem 0; }
+    .features-grid { grid-template-columns: repeat(3, 1fr); }
+    .feature { padding:1.1rem; border-radius:16px; border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); }
+    .icon { width:28px; height:28px; display:inline-grid; place-items:center; border-radius:8px; background: rgba(96,165,250,.18); border:1px solid rgba(255,255,255,.08); }
+    .how { padding: 3.5rem 0; }
+    .how-steps { grid-template-columns: repeat(3, 1fr); }
+    .step { padding:1.2rem; border-radius:16px; border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); }
+    .pricing { padding: 3.5rem 0; }
+    .plans { grid-template-columns: repeat(3, 1fr); }
+    .plan { padding:1.4rem; border-radius:18px; border:1px solid rgba(255,255,255,.1); background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)); }
+    .plan.featured { outline: 2px solid var(--brand); }
+    .price { font-size:2rem; font-weight:800; }
+    .faq { padding: 3.5rem 0; }
+    details { border:1px solid rgba(255,255,255,.1); border-radius: 14px; padding: .9rem 1rem; background: rgba(255,255,255,.03); }
+    details + details { margin-top: .8rem; }
+    summary { cursor:pointer; font-weight:600; }
+    footer { padding: 2.8rem 0; border-top:1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.2); }
+    .muted { color: var(--muted); }
+    .tag { display:inline-block; font-size:.75rem; padding:.15rem .5rem; border:1px solid rgba(255,255,255,.14); border-radius:6px; background: rgba(255,255,255,.04); }
+
+    @media (max-width: 900px) {
+      .hero{ padding: 5.2rem 0 2.4rem; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .features-grid, .how-steps, .plans { grid-template-columns: 1fr; }
+      .nav-links { display:none; }
+      .mobile-toggle { display:inline-flex; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <header class="nav" role="banner">
+    <div class="container nav-inner">
+      <a href="#top" class="brand" aria-label="TAPN home">
+        <span class="logo" aria-hidden="true"></span>
+        <span>TAPN</span>
+      </a>
+      <nav aria-label="Main" class="nav-links">
+        <a href="#features" class="muted">Features</a>
+        <a href="#how" class="muted">How it works</a>
+        <a href="#pricing" class="muted">Pricing</a>
+        <a href="#faq" class="muted">FAQ</a>
+        <a href="#waitlist" class="btn primary">Join the pilot</a>
+      </nav>
+      <button class="mobile-toggle btn ghost" id="mobileOpen" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" hidden role="dialog" aria-modal="true" aria-labelledby="mmHeading" style="position:fixed; inset:0; background:rgba(2,6,23,.85); backdrop-filter: blur(6px);">
+    <div class="container" style="padding:1rem 0;">
+      <div class="card" style="padding:1rem; margin-top:1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong id="mmHeading">TAPN</strong>
+          <button class="btn ghost" id="mobileClose">Close</button>
+        </div>
+        <div class="grid" style="margin-top:1rem;">
+          <a href="#features" class="muted" onclick="closeMenu()">Features</a>
+          <a href="#how" class="muted" onclick="closeMenu()">How it works</a>
+          <a href="#pricing" class="muted" onclick="closeMenu()">Pricing</a>
+          <a href="#faq" class="muted" onclick="closeMenu()">FAQ</a>
+          <a href="#waitlist" class="btn primary" onclick="closeMenu()">Join the pilot</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <main id="top" class="container hero">
+    <div class="hero-grid">
+      <div>
+        <span class="badge"><span class="tag">New</span> AI policy copilot</span>
+        <h1>Focused phones for focused classrooms</h1>
+        <p class="sub">Students tap an NFC tag at the door. Phones switch to the class policy automatically — like <em>“Safari only for 20 min”</em> — and teachers can change rules on the fly with plain English.</p>
+        <div class="cta">
+          <a class="btn primary" href="#waitlist">Join the pilot</a>
+          <a class="btn ghost" href="#demo">Watch 60‑sec demo</a>
+        </div>
+        <p class="muted" style="margin-top: .8rem; font-size:.9rem;">Privacy‑first • Works with iOS & Android • No student data sold</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <div class="screen" aria-label="Product demo mock">
+          <div class="screen-ui">
+            <div style="display:flex; gap:.5rem; align-items:center;">
+              <span class="chip">Room 203 · Algebra</span>
+              <span class="pill">Focus: On</span>
+            </div>
+            <div class="card" style="padding:1rem; display:grid; gap:.6rem;">
+              <div style="display:flex; gap:.6rem; align-items:center; justify-content:space-between;">
+                <div style="display:flex; gap:.6rem; align-items:center;"><span class="icon" aria-hidden="true">🔒</span><strong>Allowed</strong></div>
+                <span class="tag">Safari · Calculator</span>
+              </div>
+              <div style="display:flex; gap:.6rem; align-items:center; justify-content:space-between;">
+                <div style="display:flex; gap:.6rem; align-items:center;"><span class="icon" aria-hidden="true">⏱️</span><strong>Timer</strong></div>
+                <span class="tag">20:00</span>
+              </div>
+              <div style="display:flex; gap:.6rem; align-items:center; justify-content:space-between;">
+                <div style="display:flex; gap:.6rem; align-items:center;"><span class="icon" aria-hidden="true">🗣️</span><strong>Command</strong></div>
+                <span class="tag">“Unblock Safari for 20 min”</span>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="muted" style="font-size:.9rem;">NFC Tap‑In ready</span>
+              <a class="btn primary" href="#waitlist">Get TAPN</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FEATURES -->
+  <section id="features" class="features container">
+    <h2 style="margin:0 0 1rem; font-size:2rem;">What schools get with TAPN</h2>
+    <p class="muted" style="margin:0 0 1.2rem;">Simple controls. Real classroom impact.</p>
+    <div class="grid features-grid">
+      <div class="feature"><div class="icon">📶</div><h3>Tap‑in NFC</h3><p>Students tap at the door. Their phone switches to your class policy instantly.</p></div>
+      <div class="feature"><div class="icon">🧠</div><h3>AI policy copilot</h3><p>Say <em>“Only Calculator for quiz, 25 minutes”</em>. The system enforces, then restores.</p></div>
+      <div class="feature"><div class="icon">📱</div><h3>Selective blocking</h3><p>Allow specific apps (Safari, YouTube EDU) and block distractions. No full phone lockups.</p></div>
+      <div class="feature"><div class="icon">🕒</div><h3>Built‑in timer</h3><p>Start class timers that sync with policy windows (e.g., research period).</p></div>
+      <div class="feature"><div class="icon">✅</div><h3>Attendance & logs</h3><p>Tap‑in creates reliable attendance and a simple activity log for each session.</p></div>
+      <div class="feature"><div class="icon">🔐</div><h3>Privacy‑first</h3><p>No student content captured. Only policy states and timestamps.</p></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="how container">
+    <h2 style="margin:0 0 1rem; font-size:2rem;">How it works</h2>
+    <div class="grid how-steps">
+      <div class="step"><strong>1) Tap in</strong><p>Students tap an NFC/QR tag to join the session. Their phone enters the class focus mode.</p></div>
+      <div class="step"><strong>2) Teach with control</strong><p>Change policy with voice or text: <em>“Unblock Safari for 20 minutes.”</em> No tech detours.</p></div>
+      <div class="step"><strong>3) Auto‑restore</strong><p>When the timer ends, TAPN returns devices to normal. Attendance is saved automatically.</p></div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="pricing container">
+    <h2 style="margin:0 0 1rem; font-size:2rem;">Pilot‑friendly pricing</h2>
+    <p class="muted" style="margin:0 0 1.2rem;">Start small, scale school‑wide.</p>
+    <div class="grid plans">
+      <div class="plan">
+        <h3>Classroom Pilot</h3>
+        <p class="muted">Ideal for 1–3 classrooms</p>
+        <p class="price">$—</p>
+        <ul class="muted">
+          <li>NFC tags + software</li>
+          <li>AI policy copilot</li>
+          <li>Email support</li>
+        </ul>
+        <a class="btn ghost" href="#waitlist">Apply</a>
+      </div>
+      <div class="plan featured">
+        <h3>School</h3>
+        <p class="muted">Best for 20–80 classrooms</p>
+        <p class="price">$—</p>
+        <ul class="muted">
+          <li>Everything in Pilot</li>
+          <li>Admin dashboard</li>
+          <li>Priority support</li>
+        </ul>
+        <a class="btn primary" href="#waitlist">Talk to sales</a>
+      </div>
+      <div class="plan">
+        <h3>District</h3>
+        <p class="muted">Centralized controls</p>
+        <p class="price">$—</p>
+        <ul class="muted">
+          <li>Multi‑school rollout</li>
+          <li>SSO + compliance</li>
+          <li>Onboarding & training</li>
+        </ul>
+        <a class="btn ghost" href="#waitlist">Contact us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq container">
+    <h2 style="margin:0 0 1rem; font-size:2rem;">FAQ</h2>
+    <details>
+      <summary>Does TAPN read student content?</summary>
+      <p class="muted">No. TAPN only manages policy state (e.g., which apps are allowed) and timestamps. We don’t capture messages, browsing, or photos.</p>
+    </details>
+    <details>
+      <summary>What phones are supported?</summary>
+      <p class="muted">iOS and Android. Students install a lightweight companion app that listens for the tap‑in signal and applies school policies.</p>
+    </details>
+    <details>
+      <summary>What if a student doesn’t tap in?</summary>
+      <p class="muted">You’ll see a not‑tapped list. Optional policies can require tap‑in for network access or classroom participation.</p>
+    </details>
+    <details>
+      <summary>Can teachers override quickly?</summary>
+      <p class="muted">Yes. Voice/text commands like <em>“Allow YouTube EDU for 10 minutes”</em> apply immediately and auto‑expire.</p>
+    </details>
+  </section>
+
+  <!-- WAITLIST -->
+  <section id="waitlist" class="container" style="padding: 2rem 0 3.5rem;">
+    <div class="card" style="padding:1.2rem; display:grid; gap:1rem;">
+      <h2 style="margin:0;">Join the pilot</h2>
+      <p class="muted">Tell us a bit about your school. We’ll reach out within 2 business days.</p>
+      <form name="waitlist" method="post" data-netlify="true" onsubmit="thank(event)" style="display:grid; gap:.8rem; grid-template-columns: 1fr 1fr;">
+        <input type="hidden" name="form-name" value="waitlist" />
+        <label style="display:grid; gap:.3rem;">
+          <span>Full name</span>
+          <input name="name" required placeholder="Jane Smith" />
+        </label>
+        <label style="display:grid; gap:.3rem;">
+          <span>Work email</span>
+          <input name="email" type="email" required placeholder="jane@school.org" />
+        </label>
+        <label style="grid-column:1/3; display:grid; gap:.3rem;">
+          <span>School / District</span>
+          <input name="org" required placeholder="Riverview High School" />
+        </label>
+        <label style="grid-column:1/3; display:grid; gap:.3rem;">
+          <span>What problem are you trying to solve?</span>
+          <textarea name="note" rows="3" placeholder="Short description"></textarea>
+        </label>
+        <div style="grid-column:1/3; display:flex; gap:.6rem; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+          <small class="muted">By submitting, you agree to our <a href="#" class="tag">Privacy Policy</a>.</small>
+          <button class="btn primary" type="submit">Request access</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer role="contentinfo">
+    <div class="container" style="display:flex; justify-content:space-between; gap:1rem; align-items:center; flex-wrap:wrap;">
+      <div style="display:flex; gap:.6rem; align-items:center;">
+        <span class="logo" aria-hidden="true"></span>
+        <strong>TAPN</strong>
+        <span class="muted">© <span id="y"></span></span>
+      </div>
+      <div style="display:flex; gap:.8rem; align-items:center;">
+        <a class="muted" href="mailto:hello@tapn.school">hello@tapn.school</a>
+        <span class="tag">Boston, MA</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    const mm = document.getElementById('mobileMenu');
+    const openBtn = document.getElementById('mobileOpen');
+    const closeBtn = document.getElementById('mobileClose');
+    function openMenu(){ mm.hidden = false; openBtn.setAttribute('aria-expanded','true'); }
+    function closeMenu(){ mm.hidden = true; openBtn.setAttribute('aria-expanded','false'); }
+    openBtn?.addEventListener('click', openMenu);
+    closeBtn?.addEventListener('click', closeMenu);
+
+    // Form thanks (client-only fallback)
+    function thank(e){
+      e.preventDefault();
+      const form = e.target;
+      form.outerHTML = `<p><strong>Thanks!</strong> We'll be in touch shortly.</p>`;
+    }
+
+    // Year
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Basic input styling (no CSS framework) for consistent UI
+    for (const el of document.querySelectorAll('input, textarea')) {
+      el.style.padding = '.7rem .8rem';
+      el.style.borderRadius = '12px';
+      el.style.border = '1px solid rgba(255,255,255,.16)';
+      el.style.background = 'rgba(255,255,255,.04)';
+      el.style.color = 'inherit';
+      el.onfocus = () => el.style.outline = '3px solid var(--ring)';
+      el.onblur = () => el.style.outline = 'none';
+    }
+  </script>
+</body>
+</html>
