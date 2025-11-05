@@ -107,11 +107,14 @@
       background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden;
       display:block; position:relative;
     }
-    .shot.app{ aspect-ratio: 9 / 19.5; }
-    .shot.hw{ aspect-ratio: 4 / 3; }
+    .shot.app{ aspect-ratio: 9 / 19.5; } /* tall phones */
+    .shot.hw{ aspect-ratio: 4 / 3; }     /* device photos */
     .shot img{
-      width:100%; height:100%; object-fit:cover; display:block;
-      transition: transform .25s ease;
+      width:100%; height:100%;
+      /* KEY CHANGE: show entire image inside the card, no cropping */
+      object-fit: contain;
+      background: var(--panel);
+      display:block; transition: transform .25s ease;
     }
     .shot:hover img{ transform: scale(1.02); }
     .cap{ font-size:.8rem; color:var(--muted); padding:.5rem .25rem 0; }
@@ -124,12 +127,29 @@
     }
     .lightbox[hidden]{ display:none; }
     .lightbox-inner{
-      max-width:min(1000px, 92vw); max-height: 85vh; background:var(--panel);
-      border:1px solid var(--line); border-radius:12px; overflow:hidden; position:relative;
+      /* KEY CHANGE: let image size itself; no clipping */
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+      position: relative;
     }
-    .lightbox-inner img{ display:block; width:100%; height:auto; }
+    .lightbox-inner img{
+      display:block;
+      /* Fit fully within viewport regardless of aspect ratio */
+      max-width: min(1200px, 92vw);
+      max-height: 90vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      /* keep the nice rounded card look around the image */
+      border-radius:12px;
+      background: var(--panel);
+      border:1px solid var(--line);
+    }
     .lightbox-close{
-      position:absolute; top:.5rem; right:.5rem; border:1px solid var(--line);
+      position:absolute; top:-42px; right:0;
+      border:1px solid var(--line);
       background:var(--panel); border-radius:10px; padding:.4rem .6rem; cursor:pointer;
     }
 
@@ -140,6 +160,7 @@
       .preview{ grid-template-columns: 1fr; }
       .f-grid, .steps, .plans{ grid-template-columns: 1fr; }
       .hero{ padding: 7rem 0 3.5rem; }
+      .lightbox-close{ top:-48px; }
     }
   </style>
 </head>
