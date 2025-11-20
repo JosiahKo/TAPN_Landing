@@ -112,9 +112,10 @@
     input, textarea{ width:100%; padding:.75rem .85rem; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:inherit; font:inherit; }
     input:focus, textarea:focus{ outline:3px solid var(--ring); outline-offset:2px; }
 
-    /* Reveal (gentle) */
-    [data-reveal]{ opacity:0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; }
-    [data-reveal].in{ opacity:1; transform:none; }
+    /* Reveal (FAIL-SAFE): visible by default; JS opt-in adds animations */
+    [data-reveal]{ opacity:1; transform:none; }
+    .js-reveal [data-reveal]{ opacity:0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; }
+    .js-reveal [data-reveal].in{ opacity:1; transform:none; }
 
     /* — Media gallery — */
     .media-grid{
@@ -416,11 +417,12 @@
     // Year
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // Reveal on scroll
+    // Reveal on scroll (fail-safe: only animate if JS runs)
+    document.documentElement.classList.add('js-reveal');
     const obs = ('IntersectionObserver' in window)
       ? new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), {threshold:.1})
       : null;
-    document.querySelectorAll('[data-reveal]').forEach(el => obs?.observe(el));
+    document.querySelectorAll('[data-reveal]').forEach(el => obs?.observe(el) || el.classList.add('in'));
 
     // Word rotator
     const rot = document.getElementById('rot');
@@ -434,11 +436,16 @@
       }, 2400);
     }
 
-    // Timer demo
+    // Timer demo (fixed typo)
     const t = document.getElementById('demoTimer');
     if (t){
       let s = 50*60;
-      setInterval(()=>{ s=Math.max(0, s-1); const m=String(Math.floor(s/60)).padStart(2,'0'); const ss=String(s%60)).padStart(2,'0'); t.textContent=`${m}:${ss}`; }, 1000);
+      setInterval(()=>{
+        s = Math.max(0, s-1);
+        const m  = String(Math.floor(s/60)).padStart(2,'0');
+        const ss = String(s%60).padStart(2,'0');   // <- fixed line
+        t.textContent = `${m}:${ss}`;
+      }, 1000);
     }
 
     // Lightbox
