@@ -9,146 +9,158 @@
   <meta property="og:description" content="Tap in at the door → Class Mode on. Essentials stay open, distractions stay off, attendance auto-logged." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="og-image.png" />
-  <meta name="theme-color" content="#0F1B17" />
+  <meta name="theme-color" content="#0B0F0D" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* refined palette */
-      --bg:#0f1512;          /* deep ink */
-      --ink:#e8f1ee;         /* text on dark */
-      --muted:#a4b2ac;       /* secondary */
-      --panel:#0b100e;       /* darker panel */
-      --panel2:#121a17;      /* card */
-      --brand:#7EE0B5;       /* mint accent */
-      --line:#1e2a25;
-      --ring:rgba(126,224,181,.35);
-      --radius:16px;
-      --max:1180px;
-    }
-    @media (prefers-color-scheme: light){
-      :root{ --bg:#F5F7F5; --ink:#0F1B17; --muted:#64706B; --panel:#FFFFFF; --panel2:#FFFFFF; --line:#E4EAE5; --ring:rgba(46,92,76,.28); }
-      body{ background-image:
-        radial-gradient(1200px 600px at 10% -10%, rgba(126,224,181,.18), transparent 40%),
-        radial-gradient(800px 400px at 90% -10%, rgba(147,205,255,.15), transparent 45%); }
+      /* Dark theme palette */
+      --bg:#0B0F0D;         /* near-black */
+      --panel:#101614;      /* dark card */
+      --ink:#E6F1ED;        /* text */
+      --muted:#9AA8A2;      /* secondary text */
+      --brand:#33C48F;      /* mint accent */
+      --line:#1B2421;       /* hairline */
+      --ring:rgba(51,196,143,.35);
+      --radius:14px;
     }
 
     *{ box-sizing:border-box; }
     html, body{ height:100%; }
-    html{ scroll-behavior:smooth; }
     body{
-      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-      color: var(--ink); background: var(--bg);
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color: var(--ink);
+      background: var(--bg);
       -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
       line-height:1.55; letter-spacing:.01em;
-      background-image:
-        radial-gradient(1200px 600px at 10% -10%, rgba(126,224,181,.10), transparent 40%),
-        radial-gradient(800px 400px at 90% -10%, rgba(147,205,255,.08), transparent 45%);
     }
     a{ color:inherit; text-decoration:none; }
-    .container{ width:min(var(--max), 92vw); margin:0 auto; }
+    .container{ width:min(1120px, 92vw); margin:0 auto; }
     .narrow{ width:min(880px, 92vw); margin:0 auto; }
 
-    /* —— NAV ————————————————————————— */
+    /* —— NAV ——————————————————————————————————————— */
     header.nav{
-      position:sticky; top:0; z-index:40; border-bottom:1px solid var(--line);
-      backdrop-filter: saturate(140%) blur(10px);
-      background: color-mix(in srgb, var(--panel) 75%, transparent);
+      position:sticky; top:0; z-index:40;
+      backdrop-filter: blur(10px) saturate(130%);
+      background: rgba(12,18,16,.65);
+      border-bottom:1px solid var(--line);
     }
-    .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:.85rem 0; }
+    .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:.9rem 0; }
     .brand{ display:flex; align-items:center; gap:.6rem; font-weight:800; letter-spacing:.01em; }
-    .logo{ width:22px; height:22px; border-radius:7px; background:
-      radial-gradient(120% 120% at 0% 0%, #2E5C4C 0%, #71cfa9 60%, #2E5C4C 100%); }
+    .logo{ width:24px; height:24px; border-radius:6px; background: conic-gradient(from 210deg, #2E5C4C, #33C48F, #2E5C4C); }
     .nav-links{ display:flex; gap:1rem; align-items:center; }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.55rem; padding:.72rem 1rem;
-      border-radius:999px; font-weight:700; border:1px solid color-mix(in srgb, var(--brand) 40%, #000 0%);
-      color:#0b120f; background:var(--brand); transition:transform .18s ease, opacity .18s ease, box-shadow .18s ease; }
-    .btn:hover{ transform: translateY(-2px); box-shadow:0 8px 28px rgba(126,224,181,.18); }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+      padding:.72rem 1rem; border-radius:999px; font-weight:700;
+      border:1px solid var(--brand); color:#07110C; background:var(--brand);
+      transition:transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+    }
+    .btn:hover{ transform:translateY(-2px); box-shadow:0 8px 28px rgba(51,196,143,.18); }
     .btn.ghost{ color:var(--ink); background:transparent; border-color:var(--line); }
     .mobile-toggle{ display:none; }
 
-    /* —— HERO ———————————————————————— */
-    .hero{ padding: 8.8rem 0 5rem; position:relative; overflow:hidden; }
-    .h1{ font-size: clamp(2.6rem, 7vw, 5.2rem); line-height:1.02; letter-spacing:-.01em; margin:0 0 1rem; }
-    .lead{ color:var(--muted); font-size: clamp(1.05rem, 2.2vw, 1.22rem); margin:0; max-width: 40ch; }
-    .hero-cta{ display:flex; gap:.8rem; align-items:center; margin-top:1.6rem; }
+    /* —— HERO —————————————————————————————————————— */
+    .hero{ padding: 9rem 0 5rem; }
+    .h1{ font-size: clamp(2.4rem, 5.5vw, 4.8rem); line-height:1.03; letter-spacing:-.01em; margin:0 0 1rem; }
+    .lead{ color:var(--muted); font-size: clamp(1rem, 2.1vw, 1.15rem); margin:0; }
+    .hero-cta{ display:flex; gap:.8rem; align-items:center; margin-top:1.4rem; }
+    .kicker{ display:inline-flex; align-items:center; gap:.45rem; font-size:.85rem; border:1px solid var(--line); padding:.25rem .55rem; border-radius:999px; background:var(--panel); }
 
-    /* Phone mosaic w/ parallax */
-    .mosaic{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin-top: 3.2rem; }
-    .tile{
-      border:1px solid var(--line); border-radius:20px; background:var(--panel2); overflow:hidden;
-      aspect-ratio: 9 / 19.5; position:relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    /* Word rotator (smooth cross-fade) */
+    .rotator{ display:inline-grid; position:relative; min-width:7ch; vertical-align:baseline; }
+    .rotator span{
+      grid-area:1/1; opacity:0; transform:translateY(8px); transition:opacity .6s ease, transform .6s ease;
+      will-change: opacity, transform;
     }
-    .tile img{ width:100%; height:100%; object-fit: contain; display:block; background:var(--panel2); }
-    .tile[data-parallax]{ will-change: transform; }
+    .rotator span.in{ opacity:1; transform:translateY(0); }
 
-    /* —— STRIP ——————————————————————— */
-    .strip{ padding:2.2rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-    .strip .row{ display:flex; gap:1.2rem; flex-wrap:wrap; align-items:center; justify-content:center; color:var(--muted); }
-    .chip{ border:1px solid var(--line); border-radius:999px; padding:.4rem .7rem; font-size:.85rem; }
+    /* — Split layout preview — */
+    .preview{
+      margin-top: 3rem;
+      display:grid; grid-template-columns: 1.05fr .95fr; gap: 2rem; align-items:center;
+    }
+    .phone{
+      background:var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+      padding:1rem; aspect-ratio: 4/3;
+    }
+    .row{ display:flex; align-items:center; justify-content:space-between; padding:.7rem .85rem; border:1px solid var(--line); border-radius:10px; }
+    .row + .row{ margin-top:.7rem; }
+    .pill{ padding:.25rem .55rem; border-radius:999px; border:1px solid var(--line); font-size:.82rem; }
 
-    /* —— FEATURE CARDS (minimal) —— */
-    .grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
-    .card{ background:var(--panel2); border:1px solid var(--line); border-radius:16px; padding:1.1rem; }
-    .card h3{ font-size:1.05rem; margin:.2rem 0 .35rem; }
-    .muted{ color:var(--muted); }
-
-    /* —— GALLERY —— */
-    .media-grid{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-    .shot{ background:var(--panel2); border:1px solid var(--line); border-radius:16px; overflow:hidden; position:relative; }
-    .shot.app{ aspect-ratio: 9 / 19.5; }
-    .shot.hw{ aspect-ratio: 4 / 3; }
-    .shot img{ width:100%; height:100%; object-fit: contain; background:var(--panel2); display:block; transition: transform .25s ease; }
-    .shot:hover img{ transform: scale(1.02); }
-    .cap{ font-size:.8rem; color:var(--muted); padding:.55rem .25rem 0; }
-
-    /* —— FAQ + Form —— */
-    .section{ padding:5.2rem 0; }
-    .section h2{ font-size: clamp(1.6rem, 2.8vw, 2.2rem); margin:0 0 .8rem; letter-spacing:-.01em; }
-    details{ border:1px solid var(--line); border-radius:16px; padding:.95rem 1.05rem; background:var(--panel2); }
-    details + details{ margin-top:.8rem; }
-    summary{ cursor:pointer; font-weight:600; }
-    input, textarea{ width:100%; padding:.85rem .95rem; border:1px solid var(--line); border-radius:12px; background:var(--panel2); color:inherit; font:inherit; }
-    input:focus, textarea:focus{ outline:3px solid var(--ring); outline-offset:2px; }
+    /* —— SECTIONS —————————————————————————————————— */
+    .section{ padding:5rem 0; }
+    .section h2{ font-size: clamp(1.4rem, 2.6vw, 2rem); margin:0 0 .8rem; }
     .hairline{ border-top:1px solid var(--line); }
 
-    /* —— Lightbox —— */
-    .lightbox{ position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter: blur(4px);
-      display:grid; place-items:center; padding:2rem; }
-    .lightbox[hidden]{ display:none; }
-    .lightbox-inner{ background:transparent; border:none; border-radius:0; position:relative; }
-    .lightbox-inner img{
-      max-width:min(1200px, 92vw); max-height:90vh; width:auto; height:auto; object-fit:contain;
-      border-radius:16px; background:var(--panel2); border:1px solid var(--line);
-    }
-    .lightbox-close{ position:absolute; top:-44px; right:0;
-      border:1px solid var(--line); background:var(--panel2); border-radius:12px; padding:.45rem .65rem; cursor:pointer; }
+    /* Features */
+    .f-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
+    .f-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1rem; }
+    .f-card h3{ font-size:1.05rem; margin:.2rem 0 .3rem; }
+    .muted{ color:var(--muted); }
 
-    /* —— Reveal animations —— */
-    [data-animate]{ opacity:0; transform: translateY(16px) scale(.98); filter: blur(4px);
-      transition: opacity .6s ease, transform .6s cubic-bezier(.2,.65,.2,1), filter .6s ease; }
-    [data-animate].in{ opacity:1; transform:none; filter: blur(0); }
-    /* variant: slight tilt */
-    [data-animate="tilt"]{ transform: translateY(22px) rotateX(6deg) scale(.98); transform-origin: 50% 0; }
+    /* Steps */
+    .steps{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
+    .step{ border:1px solid var(--line); border-radius:12px; padding:1rem; background:var(--panel); }
+    .num{ width:24px; height:24px; border-radius:50%; display:inline-grid; place-items:center; border:1px solid var(--line); font-size:.85rem; margin-right:.5rem; }
+
+    /* FAQ + Form */
+    details{ border:1px solid var(--line); border-radius:12px; padding:.9rem 1rem; background:var(--panel); }
+    details + details{ margin-top:.7rem; }
+    summary{ cursor:pointer; font-weight:600; }
+    input, textarea{ width:100%; padding:.75rem .85rem; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:inherit; font:inherit; }
+    input:focus, textarea:focus{ outline:3px solid var(--ring); outline-offset:2px; }
+
+    /* Reveal (gentle) */
+    [data-reveal]{ opacity:0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; }
+    [data-reveal].in{ opacity:1; transform:none; }
+
+    /* — Media gallery — */
+    .media-grid{
+      display:grid; gap:12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .shot{
+      background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+      display:block; position:relative;
+    }
+    .shot.app{ aspect-ratio: 9 / 19.5; } /* tall phones */
+    .shot.hw{ aspect-ratio: 4 / 3; }     /* device photos */
+    .shot img{
+      width:100%; height:100%; object-fit:contain; /* show full image */
+      background:var(--panel); display:block; transition: transform .25s ease;
+    }
+    .shot:hover img{ transform: scale(1.02); }
+    .cap{ font-size:.8rem; color:var(--muted); padding:.5rem .25rem 0; }
+
+    /* — Lightbox — */
+    .lightbox{
+      position:fixed; inset:0; background:rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+      display:grid; place-items:center; padding:2rem;
+    }
+    .lightbox[hidden]{ display:none; }
+    .lightbox-inner{
+      background: transparent; border:none; border-radius:0; overflow:visible; position:relative;
+    }
+    .lightbox-inner img{
+      display:block; max-width:min(1200px, 92vw); max-height:90vh; width:auto; height:auto; object-fit:contain;
+      border-radius:12px; background:var(--panel); border:1px solid var(--line);
+    }
+    .lightbox-close{
+      position:absolute; top:-42px; right:0; border:1px solid var(--line);
+      background:var(--panel); color:var(--ink); border-radius:10px; padding:.4rem .6rem; cursor:pointer;
+    }
 
     /* Mobile */
-    @media (max-width: 980px){
+    @media (max-width: 900px){
       .nav-links{ display:none; }
       .mobile-toggle{ display:inline-flex; }
-      .grid-3{ grid-template-columns: 1fr; }
-      .mosaic{ grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 640px){
-      .mosaic{ grid-template-columns: 1fr; }
-    }
-
-    /* Respect reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      html{ scroll-behavior:auto; }
-      [data-animate]{ opacity:1 !important; transform:none !important; filter:none !important; }
-      .tile[data-parallax]{ transform:none !important; }
+      .preview{ grid-template-columns: 1fr; }
+      .f-grid, .steps{ grid-template-columns: 1fr; }
+      .hero{ padding: 7rem 0 3.5rem; }
+      .lightbox-close{ top:-48px; }
     }
   </style>
 </head>
@@ -159,9 +171,10 @@
     <div class="container nav-inner">
       <a href="#top" class="brand"><span class="logo" aria-hidden="true"></span><span>TAPN</span></a>
       <nav class="nav-links" aria-label="Main">
-        <a href="#product" class="muted">Product</a>
-        <a href="#gallery" class="muted">Gallery</a>
+        <a href="#features" class="muted">Product</a>
+        <a href="#demo" class="muted">Gallery</a>
         <a href="#how" class="muted">How it works</a>
+        <a href="#faq" class="muted">FAQ</a>
         <a href="#waitlist" class="btn">Join the pilot</a>
       </nav>
       <button class="mobile-toggle btn ghost" id="mobileOpen" aria-controls="mobileMenu" aria-expanded="false">Menu</button>
@@ -172,15 +185,16 @@
   <div id="mobileMenu" hidden role="dialog" aria-modal="true" aria-labelledby="mmHeading"
        style="position:fixed; inset:0; background:rgba(0,0,0,.5); backdrop-filter: blur(6px);">
     <div class="container" style="padding:1rem 0;">
-      <div style="background:var(--panel2); border:1px solid var(--line); border-radius:16px; padding:1rem; margin-top:1rem;">
+      <div style="background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1rem; margin-top:1rem;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong id="mmHeading">TAPN</strong>
           <button class="btn ghost" id="mobileClose">Close</button>
         </div>
         <div style="display:grid; gap:.8rem; margin-top:1rem;">
-          <a href="#product" onclick="closeMenu()">Product</a>
-          <a href="#gallery" onclick="closeMenu()">Gallery</a>
+          <a href="#features" onclick="closeMenu()">Product</a>
+          <a href="#demo" onclick="closeMenu()">Gallery</a>
           <a href="#how" onclick="closeMenu()">How it works</a>
+          <a href="#faq" onclick="closeMenu()">FAQ</a>
           <a href="#waitlist" class="btn" onclick="closeMenu()">Join the pilot</a>
         </div>
       </div>
@@ -190,94 +204,108 @@
   <!-- HERO -->
   <main id="top" class="hero">
     <div class="narrow">
-      <span class="chip" data-animate>Tap to focus</span>
-      <h1 class="h1" data-animate="tilt">Phones that behave in class.</h1>
-      <p class="lead" data-animate>Tap in at the door. Class Mode turns on. Essentials stay open, distractions stay off, attendance auto-logs.</p>
-      <div class="hero-cta" data-animate>
+      <span class="kicker" data-reveal>Tap-to-focus</span>
+      <h1 class="h1" data-reveal>
+        help students with
+        <span class="rotator" id="rot">
+          <span class="in">focus</span>
+          <span>learning</span>
+          <span>one tap</span>
+        </span>
+      </h1>
+      <p class="lead" data-reveal>Tap in at the door. Class Mode turns on. Attendance logs automatically.</p>
+      <div class="hero-cta" data-reveal>
         <a class="btn" href="#waitlist">Join the pilot</a>
-        <a class="btn ghost" href="#how">See how it works</a>
+        <a class="btn ghost" href="#how">How it works</a>
       </div>
 
-      <!-- Parallax phone mosaic -->
-      <div class="mosaic">
-        <div class="tile" data-parallax="-.5" data-animate><img src="assets/demo1.jpg" alt="Add student screen" loading="lazy" decoding="async"></div>
-        <div class="tile" data-parallax=".35" data-animate><img src="assets/demo3.jpg" alt="Student home with tap-in" loading="lazy" decoding="async"></div>
-        <div class="tile" data-parallax="-.2" data-animate><img src="assets/demo4.jpg" alt="Restricted app screen" loading="lazy" decoding="async"></div>
+      <!-- simple split preview (no gimmicks) -->
+      <div class="preview">
+        <div class="muted" data-reveal>
+          <p><strong>What it is</strong><br> A tap-in device + mobile app that blocks distracting apps during class and records attendance.</p>
+          <p style="margin-top:1rem;"><strong>Why it matters</strong><br> Fewer distractions, calmer rooms, more time on task.</p>
+        </div>
+        <div class="phone" aria-label="Class Mode mock" data-reveal>
+          <div class="row"><span>Room 203 · Algebra</span><span class="pill">Class Mode: On</span></div>
+          <div class="row"><span>Allowed</span><span class="pill">Phone · Notes · Camera</span></div>
+          <div class="row"><span>Timer</span><span class="pill" id="demoTimer">50:00</span></div>
+          <div class="row"><span>Unlock</span><span class="pill">Tap out to exit early</span></div>
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- TRUST STRIP -->
-  <section class="strip">
-    <div class="container row" data-animate>
-      <span class="chip">No data snooping</span>
-      <span class="chip">iOS + Android</span>
-      <span class="chip">Allow-lists per class</span>
-      <span class="chip">Auto-attendance</span>
-    </div>
-  </section>
+  <div class="hairline"></div>
 
-  <!-- PRODUCT -->
-  <section id="product" class="section container">
-    <h2 data-animate>What TAPN does</h2>
-    <div class="grid-3">
-      <div class="card" data-animate>
+  <!-- PRODUCT SNAPSHOT -->
+  <section id="features" class="section narrow">
+    <h2 data-reveal>Product snapshot</h2>
+    <div class="f-grid">
+      <div class="f-card" data-reveal>
         <h3>Tap-in device</h3>
-        <p class="muted">Students tap at the door → Class Mode activates and attendance is logged.</p>
+        <p class="muted">Students tap in at the door; Class Mode activates and attendance is logged.</p>
       </div>
-      <div class="card" data-animate>
+      <div class="f-card" data-reveal>
         <h3>Essentials only</h3>
-        <p class="muted">Phone, Notes, Camera remain; distracting apps are blocked for the period.</p>
+        <p class="muted">Phone, Notes, Camera remain; distracting apps are blocked.</p>
       </div>
-      <div class="card" data-animate>
-        <h3>Teacher controls</h3>
-        <p class="muted">Allow-lists per class; optional timers; tap-out for early release.</p>
+      <div class="f-card" data-reveal>
+        <h3>Manual allow-list</h3>
+        <p class="muted">Teachers can add/remove specific apps per class.</p>
       </div>
     </div>
   </section>
 
   <div class="hairline"></div>
 
-  <!-- GALLERY -->
-  <section id="gallery" class="section narrow">
-    <h2 data-animate>See it working</h2>
-    <p class="muted" data-animate>Real snapshots from our MVP and the TAPN wooden block prototype.</p>
+  <!-- DEMO / GALLERY -->
+  <section id="demo" class="section narrow">
+    <h2 data-reveal>See it working</h2>
+    <p class="muted" data-reveal>Real snapshots from our MVP and the TAPN wooden block prototype.</p>
 
-    <h3 class="muted" style="font-weight:700; margin:1rem 0 .6rem;" data-animate>In-app snapshots</h3>
-    <div class="media-grid" data-animate>
+    <!-- App snapshots (4) -->
+    <h3 class="muted" style="font-weight:700;" data-reveal>In-app snapshots</h3>
+    <div class="media-grid" data-reveal>
       <figure class="shot app">
         <a href="assets/demo1.jpg" data-zoom aria-label="Open larger image">
-          <img src="assets/demo1.jpg" alt="Tap-in → Class Mode" loading="lazy" decoding="async">
-        </a><figcaption class="cap">Tap-in → Class Mode</figcaption>
+          <img src="assets/demo1.jpg" alt="App snapshot: Tap-in → Class Mode" loading="lazy" decoding="async">
+        </a>
+        <figcaption class="cap">Tap-in → Class Mode</figcaption>
       </figure>
       <figure class="shot app">
         <a href="assets/demo2.jpg" data-zoom aria-label="Open larger image">
-          <img src="assets/demo2.jpg" alt="Allowed apps list" loading="lazy" decoding="async">
-        </a><figcaption class="cap">Allowed apps</figcaption>
+          <img src="assets/demo2.jpg" alt="App snapshot: Allowed apps list" loading="lazy" decoding="async">
+        </a>
+        <figcaption class="cap">Allowed apps</figcaption>
       </figure>
       <figure class="shot app">
         <a href="assets/demo3.jpg" data-zoom aria-label="Open larger image">
-          <img src="assets/demo3.jpg" alt="Class timer" loading="lazy" decoding="async">
-        </a><figcaption class="cap">Class timer</figcaption>
+          <img src="assets/demo3.jpg" alt="App snapshot: Class timer countdown" loading="lazy" decoding="async">
+        </a>
+        <figcaption class="cap">Class timer</figcaption>
       </figure>
       <figure class="shot app">
         <a href="assets/demo4.jpg" data-zoom aria-label="Open larger image">
-          <img src="assets/demo4.jpg" alt="Restricted view" loading="lazy" decoding="async">
-        </a><figcaption class="cap">Restricted view</figcaption>
+          <img src="assets/demo4.jpg" alt="App snapshot: Tap-out confirmation" loading="lazy" decoding="async">
+        </a>
+        <figcaption class="cap">Tap-out</figcaption>
       </figure>
     </div>
 
-    <h3 class="muted" style="font-weight:700; margin:2rem 0 .6rem;" data-animate>Hardware — TAPN wooden block</h3>
-    <div class="media-grid" data-animate>
+    <!-- Hardware photos (2) -->
+    <h3 class="muted" style="font-weight:700; margin-top:2rem;" data-reveal>Hardware — TAPN wooden block</h3>
+    <div class="media-grid" data-reveal>
       <figure class="shot hw">
         <a href="assets/hardware1.jpg" data-zoom aria-label="Open larger image">
-          <img src="assets/hardware1.jpg" alt="TAPN wooden block on classroom desk" loading="lazy" decoding="async">
-        </a><figcaption class="cap">Prototype on desk</figcaption>
+          <img src="assets/hardware1.jpg" alt="TAPN wooden block on a classroom desk" loading="lazy" decoding="async">
+        </a>
+        <figcaption class="cap">Prototype on desk</figcaption>
       </figure>
       <figure class="shot hw">
         <a href="assets/hardware2.jpg" data-zoom aria-label="Open larger image">
-          <img src="assets/hardware2.jpg" alt="NFC area close-up" loading="lazy" decoding="async">
-        </a><figcaption class="cap">NFC area close-up</figcaption>
+          <img src="assets/hardware2.jpg" alt="Close-up of the TAPN wooden block with NFC area" loading="lazy" decoding="async">
+        </a>
+        <figcaption class="cap">NFC area close-up</figcaption>
       </figure>
     </div>
   </section>
@@ -285,19 +313,19 @@
   <div class="hairline"></div>
 
   <!-- HOW IT WORKS -->
-  <section id="how" class="section container">
-    <h2 data-animate>How it works</h2>
-    <div class="grid-3">
-      <div class="card" data-animate>
-        <strong>1 · Tap in</strong>
+  <section id="how" class="section narrow">
+    <h2 data-reveal>How it works</h2>
+    <div class="steps">
+      <div class="step" data-reveal>
+        <p><span class="num">1</span><strong>Tap in</strong></p>
         <p class="muted">Students tap the device; phones switch to Class Mode.</p>
       </div>
-      <div class="card" data-animate>
-        <strong>2 · Focus</strong>
+      <div class="step" data-reveal>
+        <p><span class="num">2</span><strong>Focus</strong></p>
         <p class="muted">Only essential apps are accessible during class.</p>
       </div>
-      <div class="card" data-animate>
-        <strong>3 · Unlock</strong>
+      <div class="step" data-reveal>
+        <p><span class="num">3</span><strong>Unlock</strong></p>
         <p class="muted">Timer ends → phones return to normal, or tap out early.</p>
       </div>
     </div>
@@ -307,16 +335,16 @@
 
   <!-- FAQ -->
   <section id="faq" class="section narrow">
-    <h2 data-animate>FAQ</h2>
-    <details data-animate>
+    <h2 data-reveal>FAQ</h2>
+    <details data-reveal>
       <summary>Does TAPN read student content?</summary>
       <p class="muted">No. TAPN only manages policy state (which apps are allowed) and timestamps. We don’t capture messages, browsing, or photos.</p>
     </details>
-    <details data-animate>
+    <details data-reveal>
       <summary>What phones are supported?</summary>
       <p class="muted">iOS and Android. Students install a lightweight companion app that listens for the tap-in signal and applies school policies.</p>
     </details>
-    <details data-animate>
+    <details data-reveal>
       <summary>What if a student doesn’t tap in?</summary>
       <p class="muted">Attendance won’t log for that student. Schools can require tap-in for attendance or network access.</p>
     </details>
@@ -325,35 +353,33 @@
   <div class="hairline"></div>
 
   <!-- WAITLIST -->
-  <section id="waitlist" class="section">
-    <div class="narrow">
-      <h2 data-animate>Join the pilot</h2>
-      <p class="muted" data-animate>Tell us about your school. We’ll reach out within 2 business days.</p>
-      <form action="https://formspree.io/f/mzzklrdw" method="POST" style="display:grid; gap:.9rem; grid-template-columns: 1fr 1fr;" data-animate>
-        <input type="hidden" name="_subject" value="TAPN pilot request">
-        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none">
-        <label style="display:grid; gap:.25rem;">
-          <span>Full name</span>
-          <input name="name" required placeholder="Jane Smith" />
-        </label>
-        <label style="display:grid; gap:.25rem;">
-          <span>Work email</span>
-          <input name="email" type="email" required placeholder="jane@school.org" />
-        </label>
-        <label style="grid-column:1/3; display:grid; gap:.25rem;">
-          <span>School / District</span>
-          <input name="org" required placeholder="Riverview High School" />
-        </label>
-        <label style="grid-column:1/3; display:grid; gap:.25rem;">
-          <span>Anything else we should know?</span>
-          <textarea name="note" rows="3" placeholder="Short description"></textarea>
-        </label>
-        <div style="grid-column:1/3; display:flex; justify-content:space-between; align-items:center; gap:.8rem; flex-wrap:wrap;">
-          <small class="muted">By submitting, you agree to our <a href="#" style="text-decoration:underline;">Privacy Policy</a>.</small>
-          <button class="btn" type="submit">Join</button>
-        </div>
-      </form>
-    </div>
+  <section id="waitlist" class="section narrow">
+    <h2 data-reveal>Join the pilot</h2>
+    <p class="muted" data-reveal>Tell us about your school. We’ll reach out within 2 business days.</p>
+    <form action="https://formspree.io/f/mzzklrdw" method="POST" class="narrow" style="display:grid; gap:.9rem; grid-template-columns: 1fr 1fr;" data-reveal>
+      <input type="hidden" name="_subject" value="TAPN pilot request">
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none">
+      <label style="display:grid; gap:.25rem;">
+        <span>Full name</span>
+        <input name="name" required placeholder="Jane Smith" />
+      </label>
+      <label style="display:grid; gap:.25rem;">
+        <span>Work email</span>
+        <input name="email" type="email" required placeholder="jane@school.org" />
+      </label>
+      <label style="grid-column:1/3; display:grid; gap:.25rem;">
+        <span>School / District</span>
+        <input name="org" required placeholder="Riverview High School" />
+      </label>
+      <label style="grid-column:1/3; display:grid; gap:.25rem;">
+        <span>Anything else we should know?</span>
+        <textarea name="note" rows="3" placeholder="Short description"></textarea>
+      </label>
+      <div style="grid-column:1/3; display:flex; justify-content:space-between; align-items:center; gap:.8rem; flex-wrap:wrap;">
+        <small class="muted">By submitting, you agree to our <a href="#" style="text-decoration:underline;">Privacy Policy</a>.</small>
+        <button class="btn" type="submit">Join</button>
+      </div>
+    </form>
   </section>
 
   <div class="hairline"></div>
@@ -390,36 +416,36 @@
     // Year
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // Reveal on scroll (buttery)
-    const prefReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const io = ('IntersectionObserver' in window && !prefReduced)
-      ? new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12})
+    // Reveal on scroll
+    const obs = ('IntersectionObserver' in window)
+      ? new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), {threshold:.1})
       : null;
-    document.querySelectorAll('[data-animate]').forEach(el => io?.observe(el) || el.classList.add('in'));
+    document.querySelectorAll('[data-reveal]').forEach(el => obs?.observe(el));
 
-    // Parallax tiles (tiny + efficient)
-    const tiles = [...document.querySelectorAll('[data-parallax]')];
-    let ticking = false;
-    function onScroll(){
-      if(ticking) return;
-      ticking = true;
-      requestAnimationFrame(()=>{
-        const vh = window.innerHeight;
-        tiles.forEach(t=>{
-          const speed = parseFloat(t.getAttribute('data-parallax')) || 0.3;
-          const r = t.getBoundingClientRect();
-          const center = r.top + r.height/2 - vh/2; // - when above center
-          const translate = Math.max(Math.min(center * speed * 0.08, 40), -40); // clamp
-          t.style.transform = `translateY(${translate}px)`;
-        });
-        ticking = false;
-      });
+    // Word rotator
+    const rot = document.getElementById('rot');
+    if (rot && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      const nodes = [...rot.querySelectorAll('span')];
+      let i = 0;
+      setInterval(()=>{
+        nodes[i].classList.remove('in');
+        i = (i + 1) % nodes.length;
+        nodes[i].classList.add('in');
+      }, 2400);
     }
-    window.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
+
+    // Timer demo
+    const t = document.getElementById('demoTimer');
+    if (t){
+      let s = 50*60;
+      setInterval(()=>{ s=Math.max(0, s-1); const m=String(Math.floor(s/60)).padStart(2,'0'); const ss=String(s%60)).padStart(2,'0'); t.textContent=`${m}:${ss}`; }, 1000);
+    }
 
     // Lightbox
-    const lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg'), lbClose = document.getElementById('lbClose');
+    const lb = document.getElementById('lb');
+    const lbImg = document.getElementById('lbImg');
+    const lbClose = document.getElementById('lbClose');
+
     document.querySelectorAll('[data-zoom]').forEach(link=>{
       link.addEventListener('click', (e)=>{
         e.preventDefault();
