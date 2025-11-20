@@ -15,15 +15,9 @@
 
 <style>
   :root{
-    /* Theme variables — JS swaps these smoothly on scroll */
-    --bg:#0B0F0D;       /* background base */
-    --bg2:#101614;      /* background glow/gradient 2 */
-    --ink:#E6F1ED;      /* main text */
-    --muted:#9AA8A2;    /* secondary text */
-    --panel:#101614;    /* cards */
-    --line:#1B2421;     /* borders */
-    --brand:#33C48F;    /* accent */
-    --ring:rgba(51,196,143,.35);
+    /* Theme variables — JS swaps these on scroll */
+    --bg:#0B0F0D; --bg2:#101614; --ink:#E6F1ED; --muted:#9AA8A2;
+    --panel:#101614; --line:#1B2421; --brand:#33C48F; --ring:rgba(51,196,143,.35);
     --radius:14px;
   }
 
@@ -31,11 +25,9 @@
   html, body{ height:100%; }
   html{ scroll-behavior:smooth; }
   body{
-    margin:0;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
     color: var(--ink);
     background: var(--bg);
-    /* soft gradient wash; colors change via CSS vars */
     background-image:
       radial-gradient(1000px 420px at 10% -10%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 50%),
       radial-gradient(900px 380px at 95% -15%, color-mix(in srgb, var(--bg2) 60%, transparent), transparent 55%);
@@ -49,7 +41,7 @@
   .narrow{ width:min(880px, 92vw); margin:0 auto; }
   .muted{ color:var(--muted); }
 
-  /* —— NAV —— */
+  /* NAV */
   header.nav{
     position:sticky; top:0; z-index:40;
     backdrop-filter: blur(10px) saturate(130%);
@@ -71,14 +63,12 @@
   .btn:hover{ transform:translateY(-2px); box-shadow:0 8px 28px color-mix(in srgb, var(--brand) 20%, transparent); }
   .btn.ghost{ color:var(--ink); background:transparent; border-color:var(--line); }
 
-  /* —— HERO —— */
+  /* HERO */
   .hero{ padding: 9rem 0 5rem; position:relative; overflow:clip; }
   .h1{ font-size: clamp(2.4rem, 5.5vw, 4.8rem); line-height:1.03; letter-spacing:-.01em; margin:0 0 1rem; }
   .lead{ color:var(--muted); font-size: clamp(1rem, 2.1vw, 1.15rem); margin:0; }
   .hero-cta{ display:flex; gap:.8rem; align-items:center; margin-top:1.4rem; }
   .kicker{ display:inline-flex; align-items:center; gap:.45rem; font-size:.85rem; border:1px solid var(--line); padding:.25rem .55rem; border-radius:999px; background:var(--panel); }
-
-  /* Word rotator */
   .rotator{ display:inline-grid; position:relative; min-width:7ch; vertical-align:baseline; }
   .rotator span{ grid-area:1/1; opacity:0; transform:translateY(8px); transition:opacity .6s ease, transform .6s ease; }
   .rotator span.in{ opacity:1; transform:translateY(0); }
@@ -90,25 +80,31 @@
   .row + .row{ margin-top:.7rem; }
   .pill{ padding:.25rem .55rem; border-radius:999px; border:1px solid var(--line); font-size:.82rem; }
 
-  /* —— SECTIONS —— */
+  /* SECTIONS */
   .section{ padding:5rem 0; }
   .section h2{ font-size: clamp(1.4rem, 2.6vw, 2rem); margin:0 0 .8rem; }
   .hairline{ border-top:1px solid var(--line); transition: border-color .6s ease; }
 
-  /* Features / steps */
-  .f-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
-  .f-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1rem; transition: background-color .6s ease, border-color .6s ease; }
-  .f-card h3{ font-size:1.05rem; margin:.2rem 0 .3rem; }
+  /* Features / steps / cards */
+  .cards{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
+  .card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1rem; transition: background-color .6s ease, border-color .6s ease; }
+  .card h3{ font-size:1.05rem; margin:.2rem 0 .3rem; display:flex; align-items:center; gap:.5rem; }
   .steps{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
   .step{ border:1px solid var(--line); border-radius:12px; padding:1rem; background:var(--panel); transition: background-color .6s ease, border-color .6s ease; }
   .num{ width:24px; height:24px; border-radius:50%; display:inline-grid; place-items:center; border:1px solid var(--line); font-size:.85rem; margin-right:.5rem; }
 
-  /* FAQ + Form */
-  details{ border:1px solid var(--line); border-radius:12px; padding:.9rem 1rem; background:var(--panel); transition: background-color .6s ease, border-color .6s ease; }
-  details + details{ margin-top:.7rem; }
-  summary{ cursor:pointer; font-weight:600; }
-  input, textarea{ width:100%; padding:.75rem .85rem; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:inherit; font:inherit; }
-  input:focus, textarea:focus{ outline:3px solid var(--ring); outline-offset:2px; }
+  /* Stats */
+  .stats{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
+  .stat{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.1rem; }
+  .kpi{ font-weight:800; font-size: clamp(1.6rem, 4vw, 2.4rem); letter-spacing:-.01em; }
+  .stat p{ margin:.3rem 0 0; color:var(--muted); }
+
+  /* Tiny bar comparison */
+  .bars{ display:grid; gap:.6rem; margin-top:1rem; }
+  .bar{ display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:color-mix(in srgb, var(--bg) 70%, var(--line)); }
+  .seg-on{ background:var(--brand); }
+  .seg-off{ background:color-mix(in srgb, var(--line) 65%, transparent); }
+  .bar-label{ display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); }
 
   /* Reveal (fail-safe): visible by default; JS adds animation class to <html> */
   [data-reveal]{ opacity:1; transform:none; }
@@ -116,7 +112,7 @@
     transition: opacity .6s ease, transform .6s cubic-bezier(.2,.65,.2,1), filter .6s ease; }
   .js [data-reveal].in{ opacity:1; transform:none; filter:none; }
 
-  /* Media gallery */
+  /* Gallery */
   .media-grid{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
   .shot{ background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; position:relative; transition: background-color .6s ease, border-color .6s ease; }
   .shot.app{ aspect-ratio: 9 / 19.5; }
@@ -139,12 +135,11 @@
   @media (max-width: 900px){
     .nav-links{ display:none; }
     .preview{ grid-template-columns: 1fr; }
-    .f-grid, .steps{ grid-template-columns: 1fr; }
+    .stats, .cards, .steps{ grid-template-columns: 1fr; }
     .hero{ padding: 7rem 0 3.5rem; }
     .lightbox-close{ top:-48px; }
   }
 
-  /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
     .js [data-reveal]{ opacity:1 !important; transform:none !important; filter:none !important; }
@@ -158,10 +153,10 @@
   <div class="container nav-inner">
     <a href="#top" class="brand"><span class="logo" aria-hidden="true"></span><span>TAPN</span></a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#features" class="muted">Product</a>
+      <a href="#problem" class="muted">Problem</a>
+      <a href="#solution" class="muted">Solution</a>
       <a href="#demo" class="muted">Gallery</a>
       <a href="#how" class="muted">How it works</a>
-      <a href="#faq" class="muted">FAQ</a>
       <a href="#waitlist" class="btn">Join the pilot</a>
     </nav>
   </div>
@@ -202,28 +197,84 @@
 
 <div class="hairline"></div>
 
-<!-- PRODUCT SNAPSHOT -->
-<section id="features" class="section narrow" data-theme="mint">
-  <h2 data-reveal>Product snapshot</h2>
-  <div class="f-grid">
-    <div class="f-card" data-reveal>
-      <h3>Tap-in device</h3>
-      <p class="muted">Students tap in at the door; Class Mode activates and attendance is logged.</p>
+<!-- PROBLEM -->
+<section id="problem" class="section narrow" data-theme="rose">
+  <h2 data-reveal>The issue</h2>
+  <p class="muted" data-reveal>Phones are crushing classroom focus. Here’s the scale—short and sharp.</p>
+
+  <div class="stats" data-reveal>
+    <!-- Edit numbers via data-count -->
+    <div class="stat">
+      <div class="kpi"><span class="count" data-count="42">0</span>%</div>
+      <p>of class time risks going off-task on devices.</p>
     </div>
-    <div class="f-card" data-reveal>
-      <h3>Essentials only</h3>
-      <p class="muted">Phone, Notes, Camera remain; distracting apps are blocked.</p>
+    <div class="stat">
+      <div class="kpi">−<span class="count" data-count="15">0</span> min</div>
+      <p>lost per 50-minute class to phone distractions.</p>
     </div>
-    <div class="f-card" data-reveal>
-      <h3>Manual allow-list</h3>
-      <p class="muted">Teachers can add/remove specific apps per class.</p>
+    <div class="stat">
+      <div class="kpi"><span class="count" data-count="78">0</span>%</div>
+      <p>teachers say phones directly reduce learning quality.</p>
+    </div>
+  </div>
+
+  <!-- Minimal bar comparison (no images) -->
+  <div class="card" style="margin-top:1rem;" data-reveal>
+    <div class="bar-label"><span>Typical class</span><span>On-task vs. distracted</span></div>
+    <div class="bars">
+      <div class="bar" aria-label="Without TAPN">
+        <div class="seg-on" style="width:60%"></div>
+        <div class="seg-off" style="width:40%"></div>
+      </div>
+      <div class="bar-label"><span>Without TAPN</span><span>60% / 40%</span></div>
+
+      <div class="bar" aria-label="With TAPN">
+        <div class="seg-on" style="width:85%"></div>
+        <div class="seg-off" style="width:15%"></div>
+      </div>
+      <div class="bar-label"><span>With TAPN</span><span>85% / 15%</span></div>
     </div>
   </div>
 </section>
 
 <div class="hairline"></div>
 
-<!-- DEMO / GALLERY -->
+<!-- SOLUTION -->
+<section id="solution" class="section narrow" data-theme="mint">
+  <h2 data-reveal>Our solution</h2>
+  <p class="muted" data-reveal>One tap at the door turns on Class Mode: essentials stay, distractions go, attendance logs itself.</p>
+
+  <div class="cards" data-reveal>
+    <div class="card">
+      <h3>
+        <!-- phone + slash -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" stroke="currentColor"/><path d="M3 21L21 3" stroke="currentColor"/></svg>
+        Block the noise
+      </h3>
+      <p class="muted">Auto-enforced allow-list during class. Notes, Camera, and teacher-approved apps only.</p>
+    </div>
+    <div class="card">
+      <h3>
+        <!-- clock -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor"/><path d="M12 7v6l4 2" stroke="currentColor"/></svg>
+        More time on task
+      </h3>
+      <p class="muted">Fewer interruptions → calmer rooms → minutes back every period.</p>
+    </div>
+    <div class="card">
+      <h3>
+        <!-- check list -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h10M4 12h10M4 18h10" stroke="currentColor"/><path d="M17 13l2 2 4-4" stroke="currentColor"/></svg>
+        Attendance, done
+      </h3>
+      <p class="muted">Tap-in records who’s present. Exportable logs—no extra steps.</p>
+    </div>
+  </div>
+</section>
+
+<div class="hairline"></div>
+
+<!-- GALLERY -->
 <section id="demo" class="section narrow" data-theme="plum">
   <h2 data-reveal>See it working</h2>
   <p class="muted" data-reveal>Real snapshots from our MVP and the TAPN wooden block prototype.</p>
@@ -231,27 +282,19 @@
   <h3 class="muted" style="font-weight:700;" data-reveal>In-app snapshots</h3>
   <div class="media-grid" data-reveal>
     <figure class="shot app">
-      <a href="assets/demo1.jpg" data-zoom aria-label="Open larger image">
-        <img src="assets/demo1.jpg" alt="Tap-in → Class Mode" loading="lazy" decoding="async">
-      </a>
+      <a href="assets/demo1.jpg" data-zoom><img src="assets/demo1.jpg" alt="Tap-in → Class Mode" loading="lazy" decoding="async"></a>
       <figcaption class="cap">Tap-in → Class Mode</figcaption>
     </figure>
     <figure class="shot app">
-      <a href="assets/demo2.jpg" data-zoom aria-label="Open larger image">
-        <img src="assets/demo2.jpg" alt="Allowed apps list" loading="lazy" decoding="async">
-      </a>
+      <a href="assets/demo2.jpg" data-zoom><img src="assets/demo2.jpg" alt="Allowed apps list" loading="lazy" decoding="async"></a>
       <figcaption class="cap">Allowed apps</figcaption>
     </figure>
     <figure class="shot app">
-      <a href="assets/demo3.jpg" data-zoom aria-label="Open larger image">
-        <img src="assets/demo3.jpg" alt="Class timer" loading="lazy" decoding="async">
-      </a>
+      <a href="assets/demo3.jpg" data-zoom><img src="assets/demo3.jpg" alt="Class timer" loading="lazy" decoding="async"></a>
       <figcaption class="cap">Class timer</figcaption>
     </figure>
     <figure class="shot app">
-      <a href="assets/demo4.jpg" data-zoom aria-label="Open larger image">
-        <img src="assets/demo4.jpg" alt="Restricted view" loading="lazy" decoding="async">
-      </a>
+      <a href="assets/demo4.jpg" data-zoom><img src="assets/demo4.jpg" alt="Restricted view" loading="lazy" decoding="async"></a>
       <figcaption class="cap">Restricted view</figcaption>
     </figure>
   </div>
@@ -259,15 +302,11 @@
   <h3 class="muted" style="font-weight:700; margin-top:2rem;" data-reveal>Hardware — TAPN wooden block</h3>
   <div class="media-grid" data-reveal>
     <figure class="shot hw">
-      <a href="assets/hardware1.jpg" data-zoom aria-label="Open larger image">
-        <img src="assets/hardware1.jpg" alt="TAPN wooden block on a classroom desk" loading="lazy" decoding="async">
-      </a>
+      <a href="assets/hardware1.jpg" data-zoom><img src="assets/hardware1.jpg" alt="TAPN wooden block on a classroom desk" loading="lazy" decoding="async"></a>
       <figcaption class="cap">Prototype on desk</figcaption>
     </figure>
     <figure class="shot hw">
-      <a href="assets/hardware2.jpg" data-zoom aria-label="Open larger image">
-        <img src="assets/hardware2.jpg" alt="NFC area close-up" loading="lazy" decoding="async">
-      </a>
+      <a href="assets/hardware2.jpg" data-zoom><img src="assets/hardware2.jpg" alt="NFC area close-up" loading="lazy" decoding="async"></a>
       <figcaption class="cap">NFC area close-up</figcaption>
     </figure>
   </div>
@@ -368,10 +407,9 @@
 </div>
 
 <script>
-  // mark JS-enabled for reveals
   document.documentElement.classList.add('js');
 
-  // Smooth section reveals
+  // Reveal on scroll
   const revealer = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries => {
         entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); revealer.unobserve(e.target);} });
@@ -438,13 +476,13 @@
   lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLb(); });
   window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !lb.hidden) closeLb(); });
 
-  // —— Scroll-triggered THEMES ——————————————————
-  // Themes map to CSS variable sets; we tween by simply swapping vars (CSS transitions handle the rest).
+  // THEMES per section
   const THEMES = {
     onyx:  { bg:'#0B0F0D', bg2:'#101614', ink:'#E6F1ED', muted:'#9AA8A2', panel:'#101614', line:'#1B2421', brand:'#33C48F' },
     mint:  { bg:'#0C1412', bg2:'#0E1A17', ink:'#EAF7F2', muted:'#A8C7BD', panel:'#0F1714', line:'#183129', brand:'#7EE0B5' },
     plum:  { bg:'#120D14', bg2:'#1A1320', ink:'#F3EAF5', muted:'#C9B7CF', panel:'#17111C', line:'#2A1D32', brand:'#D08CFF' },
-    sand:  { bg:'#0F1110', bg2:'#171917', ink:'#F4F3EF', muted:'#B9B6AF', panel:'#141615', line:'#242825', brand:'#F5C361' }
+    sand:  { bg:'#0F1110', bg2:'#171917', ink:'#F4F3EF', muted:'#B9B6AF', panel:'#141615', line:'#242825', brand:'#F5C361' },
+    rose:  { bg:'#110E10', bg2:'#1C1419', ink:'#FFEFF7', muted:'#D9C3CF', panel:'#171217', line:'#2A1C28', brand:'#FF7AB6' }
   };
 
   const sections = document.querySelectorAll('[data-theme]');
@@ -462,15 +500,35 @@
           r.setProperty('--panel', th.panel);
           r.setProperty('--line', th.line);
           r.setProperty('--brand', th.brand);
-          // update page background gradient too
           document.body.style.backgroundImage =
             `radial-gradient(1000px 420px at 10% -10%, color-mix(in srgb, ${th.brand} 16%, transparent), transparent 50%),
              radial-gradient(900px 380px at 95% -15%, color-mix(in srgb, ${th.bg2} 60%, transparent), transparent 55%)`;
         });
       }, {threshold:.55})
     : null;
-
   sections.forEach(s => themeObs?.observe(s));
+
+  // Animated counters in the Problem section
+  const counters = document.querySelectorAll('.count');
+  const cObs = ('IntersectionObserver' in window)
+    ? new IntersectionObserver(entries=>{
+        entries.forEach(({isIntersecting, target})=>{
+          if(!isIntersecting) return;
+          const end = Number(target.dataset.count || '0');
+          const duration = 1200;
+          const startTime = performance.now();
+          function tick(now){
+            const t = Math.min(1, (now - startTime)/duration);
+            const val = Math.floor(end * (t*t*(3-2*t))); // ease
+            target.textContent = val;
+            if(t < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          cObs.unobserve(target);
+        });
+      }, {threshold:.6})
+    : null;
+  counters.forEach(el => cObs?.observe(el));
 </script>
 </body>
 </html>
