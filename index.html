@@ -15,15 +15,16 @@
 
 <style>
   :root{
-    /* Light palette with gentle mint accent */
+    /* light palette with gentle mint accent */
     --bg:#F7F8F4;     --bg2:#EEF2EE;
     --ink:#0F1B17;    --muted:#5F6B66;
     --panel:#FFFFFF;  --line:#E5EAE5;
     --brand:#29B087;  --ring:rgba(41,176,135,.26);
     --radius:14px;
 
-    /* Problem section sketch opacity (JS updates this 1 → .35) */
-    --sketch-opacity: 1;
+    /* visualization controls (JS updates these) */
+    --sketch-opacity: 1;     /* fades 1 → .35 while scrolling the scene */
+    --scene-hue: 0;          /* 0-360 used to tint “phone screens” */
   }
 
   *{ box-sizing:border-box; }
@@ -35,7 +36,7 @@
     color: var(--ink);
     background-color: var(--bg);
 
-    /* soft radial wash (the grain sits on ::before) */
+    /* soft minty radial wash; grain sits on ::before */
     background-image:
       radial-gradient(1200px 520px at 10% -12%, color-mix(in srgb, var(--brand) 6%, transparent), transparent 55%),
       radial-gradient(1200px 520px at 95% -18%, color-mix(in srgb, var(--bg2) 35%, transparent), transparent 60%);
@@ -127,11 +128,45 @@
   .seg-off{ background:#DDE4DF; }
   .bar-label{ display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); }
 
-  /* Reveal */
+  /* Reveal base */
   [data-reveal]{ opacity:1; transform:none; }
-  .js [data-reveal]{ opacity:0; transform: translateY(16px) scale(.985); filter: blur(4px);
+  .js [data-reveal]:not([data-reveal-manual]){ opacity:0; transform: translateY(16px) scale(.985); filter: blur(4px);
     transition: opacity .6s ease, transform .6s cubic-bezier(.2,.65,.2,1), filter .6s ease; }
   .js [data-reveal].in{ opacity:1; transform:none; filter:none; }
+
+  /* ---------- PROBLEM: Scene as background ---------- */
+  #problem{ isolation:isolate; padding-top:0; }
+  .sketch-stage{
+    position:relative;
+    height: 160vh;         /* long scroll to “experience” the scene */
+    overflow:hidden;
+  }
+  /* the line-drawing image (SVG filter) */
+  .sketch-bg{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    opacity: var(--sketch-opacity); transition: opacity .25s ease;
+  }
+  /* soft white overlay for readability */
+  .sketch-fade{
+    position:absolute; inset:0; pointer-events:none; z-index:0;
+    background: linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,0) 40%, rgba(255,255,255,.14) 90%);
+  }
+  /* tiny animated “phone screens” sitting on desks (positions tuned for a typical classroom shot) */
+  .phone-markers{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .p{
+    position:absolute; width:24px; height:36px; border-radius:6px;
+    border:1.4px solid rgba(15,27,23,.65);
+    background: hsl(var(--h) 76% 72% / .9);
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    transform: translate(-50%,-50%);
+  }
+  /* default locations — adjust if your classroom photo is framed differently */
+  .p.p1{ left:24%; top:62%; } .p.p2{ left:43%; top:58%; }
+  .p.p3{ left:60%; top:62%; } .p.p4{ left:31%; top:77%; }
+  .p.p5{ left:50%; top:75%; } .p.p6{ left:69%; top:78%; }
+
+  /* The stats come AFTER the scene, so we add spacing before they start */
+  #statsWrap{ margin-top: 1.5rem; }
 
   /* Gallery */
   .media-grid{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
@@ -152,24 +187,6 @@
   .lightbox-close{ position:absolute; top:-42px; right:0; border:1px solid var(--line);
     background:#fff; color:var(--ink); border-radius:10px; padding:.4rem .6rem; cursor:pointer; }
 
-  /* ---------- Problem section SKETCH-as-BACKGROUND ---------- */
-  #problem{
-    /* create a stacking context so our background sits under content but above body::before */
-    isolation:isolate;
-    min-height: 120vh; /* give room for the entrance before stats overlay */
-  }
-  .sketch-bg{
-    position:absolute; inset:0; z-index:0; pointer-events:none;
-    opacity: var(--sketch-opacity); transition: opacity .3s ease;
-  }
-  /* This container sits above the sketch bg */
-  #problem .narrow, #problem .container{ position:relative; z-index:1; }
-  /* The intro spacer lets the sketch show briefly before stats overlay */
-  .sketch-intro{ height: 42vh; }
-  /* As we fade in the stats, we also slightly blur the sketch for depth */
-  #problem[data-fading="1"] .sketch-bg{ filter: blur(.4px); }
-  #problem[data-fading="2"] .sketch-bg{ filter: blur(.8px); }
-
   /* Mobile */
   @media (max-width: 900px){
     .nav-links{ display:none; }
@@ -177,19 +194,15 @@
     .stats, .cards, .steps{ grid-template-columns: 1fr; }
     .hero{ padding: 7rem 0 3.5rem; }
     .lightbox-close{ top:-48px; }
+    .p{ width:18px; height:28px; }
   }
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
-    .js [data-reveal]{ opacity:1 !important; transform:none !important; filter:none !important; }
+    .js [data-reveal]:not([data-reveal-manual]){ opacity:1 !important; transform:none !important; filter:none !important; }
   }
 </style>
-
-<!-- RoughJS for hand-drawn classroom -->
-<script src="https://unpkg.com/roughjs@4.5.1/bundled/rough.js"></script>
 </head>
 <body>
-
-<!-- NAV -->
 <header class="nav">
   <div class="container nav-inner">
     <a href="#top" class="brand"><span class="logo" aria-hidden="true"></span><span>TAPN</span></a>
@@ -238,19 +251,56 @@
 
 <div class="hairline"></div>
 
-<!-- PROBLEM (sketch is the background) -->
+<!-- PROBLEM -->
 <section id="problem" class="section" data-theme="tone2">
-  <!-- background canvases -->
-  <canvas id="sketchStatic" class="sketch-bg" aria-hidden="true"></canvas>
-  <canvas id="sketchPhones" class="sketch-bg" aria-hidden="true"></canvas>
+  <!-- Visualization “stage”: background line drawing + animated phone rectangles -->
+  <div id="sketchStage" class="sketch-stage">
+    <!-- SVG line-drawing made from your classroom photo -->
+    <svg class="sketch-bg" preserveAspectRatio="xMidYMid slice" id="sketchSvg">
+      <defs>
+        <!-- Edge-detect + high-contrast “ink” look -->
+        <filter id="inkSketch" color-interpolation-filters="sRGB">
+          <feColorMatrix type="saturate" values="0" />
+          <feGaussianBlur stdDeviation="0.6" result="b"/>
+          <feConvolveMatrix order="3" kernelMatrix="
+              -1 -1 -1
+              -1  8 -1
+              -1 -1 -1" result="edges"/>
+          <feComposite in="edges" in2="b" operator="arithmetic" k2="1" k3="-1" result="edgeSub"/>
+          <feComponentTransfer>
+            <feFuncR type="gamma" amplitude="1.4" exponent="0.7" offset="0"/>
+            <feFuncG type="gamma" amplitude="1.4" exponent="0.7" offset="0"/>
+            <feFuncB type="gamma" amplitude="1.4" exponent="0.7" offset="0"/>
+          </feComponentTransfer>
+          <feColorMatrix values="
+             1 0 0 0 0
+             0 1 0 0 0
+             0 0 1 0 0
+            -1 -1 -1 3 0" />
+        </filter>
+      </defs>
+      <image href="assets/classroom.jpg" x="0" y="0" width="100%" height="100%" style="filter:url(#inkSketch)"/>
+    </svg>
 
-  <div class="narrow">
-    <div class="sketch-intro" aria-hidden="true"></div>
+    <div class="sketch-fade"></div>
 
-    <h2 data-reveal>The issue</h2>
-    <p class="muted" data-reveal>Phones are crushing classroom focus. Here’s the scale — short and sharp.</p>
+    <!-- Minimal “phone screens” over desks (colors change with scroll) -->
+    <div class="phone-markers" aria-hidden="true">
+      <div class="p p1" style="--h: calc(var(--scene-hue) + 0)"></div>
+      <div class="p p2" style="--h: calc(var(--scene-hue) + 40)"></div>
+      <div class="p p3" style="--h: calc(var(--scene-hue) + 80)"></div>
+      <div class="p p4" style="--h: calc(var(--scene-hue) + 120)"></div>
+      <div class="p p5" style="--h: calc(var(--scene-hue) + 160)"></div>
+      <div class="p p6" style="--h: calc(var(--scene-hue) + 200)"></div>
+    </div>
+  </div>
 
-    <div id="statsBlock" class="stats" data-reveal>
+  <!-- STATS (these reveal only AFTER the stage is fully scrolled) -->
+  <div id="statsWrap" class="narrow">
+    <h2 data-reveal-manual id="statsTitle">The issue</h2>
+    <p class="muted" data-reveal-manual id="statsIntro">Phones are crushing classroom focus. Here’s the scale — short and sharp.</p>
+
+    <div id="statsBlock" class="stats" data-reveal-manual>
       <div class="stat">
         <div class="kpi"><span class="count" data-count="42">0</span>%</div>
         <p>of class time risks going off-task on devices.</p>
@@ -265,7 +315,7 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top:1rem;" data-reveal>
+    <div class="card" style="margin-top:1rem;" data-reveal-manual id="statsBars">
       <div class="bar-label"><span>Typical class</span><span>On-task vs. distracted</span></div>
       <div class="bars">
         <div class="bar" aria-label="Without TAPN">
@@ -453,13 +503,13 @@
 <script>
   document.documentElement.classList.add('js');
 
-  /* ---------- Reveal on scroll ---------- */
+  /* Reveal on scroll (skip elements that say data-reveal-manual) */
   const revealer = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries => {
         entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); revealer.unobserve(e.target);} });
       }, {threshold:.12})
     : null;
-  document.querySelectorAll('[data-reveal]').forEach(el => revealer?.observe(el));
+  document.querySelectorAll('[data-reveal]:not([data-reveal-manual])').forEach(el => revealer?.observe(el));
 
   /* Year */
   document.getElementById('y').textContent = new Date().getFullYear();
@@ -520,7 +570,61 @@
   lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLb(); });
   window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !lb.hidden) closeLb(); });
 
-  /* ------- Subtle shade shifts on scroll (background tones) ------- */
+  /* ===== Scene scroll logic: fade sketch + animate phone colors ===== */
+  (function(){
+    const stage = document.getElementById('sketchStage');
+    const statsTitle = document.getElementById('statsTitle');
+    const statsIntro = document.getElementById('statsIntro');
+    const statsBlock = document.getElementById('statsBlock');
+    const statsBars  = document.getElementById('statsBars');
+
+    // Hide stats until scene fully scrolled
+    [statsTitle, statsIntro, statsBlock, statsBars].forEach(el=>{
+      el.style.opacity = 0;
+      el.style.transform = 'translateY(16px)';
+    });
+
+    function update(){
+      const r = stage.getBoundingClientRect();
+      const vh = innerHeight || document.documentElement.clientHeight;
+
+      // how much of the stage has been scrolled through (0 → 1 → beyond)
+      const total = Math.max(1, r.height - vh);
+      const scrolled = Math.min(total, Math.max(0, -r.top));
+      const p = scrolled / total; // 0 at start, 1 at end
+
+      // fade the sketch from 1 → .35
+      const alpha = (1 - 0.65*p).toFixed(3);
+      document.documentElement.style.setProperty('--sketch-opacity', alpha);
+
+      // animate phone hues (subtle)
+      const hue = Math.round(180 * p);
+      stage.style.setProperty('--scene-hue', hue);
+
+      // reveal stats ONLY once the stage finishes (p >= ~0.98)
+      const showStats = p >= 0.98 || r.top + r.height <= vh*0.02;
+      if (showStats){
+        [statsTitle, statsIntro, statsBlock, statsBars].forEach(el=>{
+          el.style.opacity = 1;
+          el.style.transform = 'translateY(0)';
+          el.classList.add('in');
+        });
+      }
+      requestAnimationFrameId = null;
+    }
+
+    let requestAnimationFrameId=null;
+    function onScroll(){
+      if(!requestAnimationFrameId){
+        requestAnimationFrameId = requestAnimationFrame(update);
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll, {passive:true});
+    update();
+  })();
+
+  /* Subtle tone shifts by section */
   const THEMES = {
     tone1:{ bg:'#F7F8F4', bg2:'#EEF2EE', panel:'#FFFFFF', line:'#E5EAE5' },
     tone2:{ bg:'#F5F7F3', bg2:'#ECF1ED', panel:'#FFFFFF', line:'#E3E9E4' },
@@ -548,181 +652,7 @@
     : null;
   sections.forEach(s => themeObs?.observe(s));
 
-  /* ===== Hand-drawn classroom SKETCH as BACKGROUND ===== */
-  (function(){
-    const section = document.getElementById('problem');
-    const statCV  = document.getElementById('sketchStatic');
-    const phoneCV = document.getElementById('sketchPhones');
-    const solution= document.getElementById('solution');
-    if(!section || !statCV || !phoneCV) return;
-
-    const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-    const brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim() || '#29B087';
-
-    function fitCanvas(c){
-      const r = section.getBoundingClientRect();
-      c.width  = Math.floor(r.width * DPR);
-      c.height = Math.floor(r.height * DPR);
-      c.style.width  = r.width + 'px';
-      c.style.height = r.height + 'px';
-      const ctx = c.getContext('2d');
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    }
-
-    let phoneRects = [];
-    function drawStatic(){
-      fitCanvas(statCV); fitCanvas(phoneCV);
-      const rc = rough.canvas(statCV);
-      const ctx = statCV.getContext('2d');
-      ctx.clearRect(0,0,statCV.width, statCV.height);
-
-      const r = section.getBoundingClientRect();
-      const W = r.width, H = r.height;
-
-      const opts = { roughness: 1.5, bowing: 1.2, stroke: 'rgba(15,27,23,.75)', strokeWidth: 2 };
-
-      // room border (soft hand line)
-      rc.rectangle(10, 10, W-20, H-20, {...opts, roughness:1});
-
-      // whiteboard (front-right)
-      rc.rectangle(W*0.60, H*0.10, W*0.30, H*0.18, {...opts, roughness:1.1});
-      rc.line(W*0.60, H*0.19, W*0.90, H*0.19, {...opts, stroke:'rgba(15,27,23,.38)'});
-
-      // teacher (silhouette)
-      rc.circle(W*0.84, H*0.28, 36, {...opts});
-      rc.rectangle(W*0.82, H*0.32, 44, 70, {...opts, fill:'rgba(15,27,23,.06)', fillStyle:'hachure'});
-      rc.line(W*0.84, H*0.40, W*0.84, H*0.55, opts);
-      rc.line(W*0.84, H*0.55, W*0.80, H*0.68, opts);
-      rc.line(W*0.84, H*0.55, W*0.88, H*0.68, opts);
-      rc.line(W*0.83, H*0.36, W*0.79, H*0.33, opts);
-      rc.line(W*0.85, H*0.36, W*0.89, H*0.33, opts);
-
-      // rows of desks (perspective), students + small phone rectangles
-      phoneRects = [];
-      function row(y, scale, x0, x1, count){
-        for(let i=0;i<count;i++){
-          const t = i/(count-1);
-          const cx = x0 + (x1-x0)*t;
-          const w = 150*scale, h = 72*scale;
-          const x = cx - w/2;
-
-          rc.rectangle(x, y, w, h, {...opts, seed: 101+i+Math.round(y)});
-          // head + torso
-          rc.ellipse(x + w*0.18, y - 20*scale, 28*scale, 24*scale, {...opts, seed: 301+i});
-          rc.rectangle(x + w*0.12, y - 6*scale, 36*scale, 26*scale, {...opts, seed: 401+i});
-
-          // phone near right-top of desk
-          const pw = 20*scale, ph = 30*scale;
-          const px = x + w*0.68, py = y + h*0.22;
-          phoneRects.push({x:px, y:py, w:pw, h:ph, seed: 600+i+Math.round(y)});
-        }
-      }
-      row(H*0.48, 0.86, W*0.18, W*0.88, 4);  // back row
-      row(H*0.66, 1.00, W*0.14, W*0.84, 4);  // front row
-
-      // floor guides (very light)
-      for(let i=0;i<6;i++){
-        const yy = H*0.42 + i*H*0.09;
-        rc.line(W*0.10, yy, W*0.92, yy, {...opts, stroke:'rgba(15,27,23,.18)', strokeWidth:1.1, roughness:1});
-      }
-    }
-
-    function drawPhones(progress){
-      const rc = rough.canvas(phoneCV);
-      const ctx = phoneCV.getContext('2d');
-      ctx.clearRect(0,0,phoneCV.width, phoneCV.height);
-
-      const solutionActive = document.body.classList.contains('solution-active');
-
-      phoneRects.forEach((p, i)=>{
-        let fill;
-        if(solutionActive){
-          fill = brand; // calm green in solution
-        }else{
-          const t = Math.max(0, Math.min(1, progress));
-          if(t < 0.02){ fill = '#DDE4DF'; }
-          else{
-            const hue = (i*47 + t*260) % 360;
-            const sat = Math.round(15 + t*77);
-            const lit = Math.round(78 - t*22);
-            fill = `hsl(${hue} ${sat}% ${lit}%)`;
-          }
-        }
-        rc.rectangle(p.x, p.y, p.w, p.h, {
-          stroke: 'rgba(15,27,23,.65)',
-          strokeWidth: 1.5,
-          roughness: 1.1,
-          bowing: 1.3,
-          fill,
-          fillStyle: 'hachure',
-          fillWeight: 1.1,
-          hachureGap: 6,
-          seed: p.seed
-        });
-      });
-    }
-
-    function layout(){
-      drawStatic();
-      drawPhones(0);
-    }
-    layout();
-    window.addEventListener('resize', layout, {passive:true});
-
-    /* Fade logic: as you scroll through #problem, stats fade in and sketch opacity eases 1 → .35 */
-    const stats = document.getElementById('statsBlock');
-    let ticking=false, last = -1;
-    function onScroll(){
-      if(ticking) return; ticking=true;
-      requestAnimationFrame(()=>{
-        const rect = section.getBoundingClientRect();
-        const vh = innerHeight || document.documentElement.clientHeight;
-
-        // progress: when section top enters (vh*0.9) until past middle
-        const start = Math.min(vh*0.9, vh);
-        const end   = Math.max(vh*0.25, 240);
-        const pRaw  = (start - rect.top) / (start + end);
-        const p     = Math.max(0, Math.min(1, pRaw));
-
-        // fade background sketch opacity from 1 → .35
-        const alpha = (1 - 0.65*p).toFixed(3);
-        document.documentElement.style.setProperty('--sketch-opacity', alpha);
-
-        // hint blur stage classes for depth (optional)
-        section.dataset.fading = p>0.66 ? '2' : (p>0.33 ? '1' : '0');
-
-        // reveal stats gradually (0 → 1 between p=.2 and .7)
-        const s = Math.max(0, Math.min(1, (p - 0.2) / 0.5));
-        stats.style.opacity = s.toFixed(3);
-        stats.style.transform = `translateY(${(1-s)*12}px)`;
-
-        // animate phone screen colors tied to p
-        if (Math.abs(p - last) > 0.015) { drawPhones(p); last=p; }
-        ticking=false;
-      });
-    }
-    stats.style.opacity = 0; stats.style.transform = 'translateY(12px)';
-    window.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
-
-    // Flip phone colors to calm green while Solution is visible
-    if('IntersectionObserver' in window){
-      const solObs = new IntersectionObserver(es=>{
-        es.forEach(e=>{
-          if(e.isIntersecting){
-            document.body.classList.add('solution-active');
-            drawPhones(1);
-          }else{
-            document.body.classList.remove('solution-active');
-            onScroll();
-          }
-        });
-      }, {threshold:.45});
-      solObs.observe(solution);
-    }
-  })();
-
-  /* Animated counters */
+  /* Number counters (when stats finally appear) */
   const counters = document.querySelectorAll('.count');
   const cObs = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries=>{
@@ -740,7 +670,7 @@
           requestAnimationFrame(tick);
           cObs.unobserve(target);
         });
-      }, {threshold:.6})
+      }, {threshold:.7})
     : null;
   counters.forEach(el => cObs?.observe(el));
 </script>
