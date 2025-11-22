@@ -53,18 +53,18 @@
     transition: background-color .6s ease, color .4s ease, background-image .9s ease;
   }
 
-  /* — Grain overlay (stronger + guaranteed) — */
+  /* — Grain overlay — */
   body::before{
     content:"";
     position: fixed; inset:0;
     pointer-events:none;
-    z-index: 0;                /* content is implicitly z-index: auto (above) */
+    z-index: 0;
     opacity: .18;              /* adjust 0.10–0.22 to taste */
-    mix-blend-mode: multiply;  /* keeps it subtle on white */
+    mix-blend-mode: multiply;
     background-image:
       url('assets/grain.png'),
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='400' height='400' filter='url(%23n)' opacity='0.55'/></svg>");
-    background-size: 420px, 400px;   /* visible grain tiles */
+    background-size: 420px, 400px;
     background-repeat: repeat, repeat;
   }
 
@@ -139,6 +139,45 @@
   .seg-on{ background:var(--brand); }
   .seg-off{ background:#DDE4DF; }
   .bar-label{ display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); }
+
+  /* Classroom viz */
+  .viz-wrap{
+    margin: 1.2rem 0 2rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: .8rem;
+  }
+  .viz{
+    width: 100%;
+    display: block;
+    height: auto;
+  }
+  .viz .line{
+    stroke: color-mix(in srgb, var(--ink) 78%, transparent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+  .viz .board, .viz .desk{
+    fill: transparent;
+    stroke: color-mix(in srgb, var(--ink) 60%, transparent);
+    stroke-width: 2;
+  }
+  .viz .teacher-fill{
+    fill: color-mix(in srgb, var(--ink) 10%, transparent);
+  }
+  .phone-screen{
+    stroke: color-mix(in srgb, var(--ink) 55%, transparent);
+    stroke-width: 1.5;
+    fill: #DDE4DF;               /* starts muted */
+    transition: fill .25s ease;
+  }
+  /* When solution is active, calm green takes over */
+  .solution-active .phone-screen{
+    fill: color-mix(in srgb, var(--brand) 85%, white 15%);
+  }
 
   /* Reveal */
   [data-reveal]{ opacity:1; transform:none; }
@@ -234,6 +273,82 @@
 <section id="problem" class="section narrow" data-theme="tone2">
   <h2 data-reveal>The issue</h2>
   <p class="muted" data-reveal>Phones are crushing classroom focus. Here’s the scale - short and sharp.</p>
+
+  <!-- Classroom visualization -->
+  <div class="viz-wrap" data-reveal>
+    <svg id="classroomViz" class="viz" viewBox="0 0 1200 520" role="img" aria-labelledby="classroomTitle">
+      <title id="classroomTitle">Line drawing of classroom showing teacher and students with phones</title>
+
+      <!-- Floor guide -->
+      <rect x="16" y="16" width="1168" height="488" rx="12" class="board" opacity=".35"></rect>
+
+      <!-- Board -->
+      <rect x="120" y="40" width="580" height="90" rx="8" class="board"></rect>
+      <line x1="120" y1="95" x2="700" y2="95" class="line" opacity=".4"/>
+
+      <!-- Teacher -->
+      <circle cx="860" cy="85" r="24" class="line"></circle>
+      <rect x="832" y="112" width="56" height="62" rx="10" class="teacher-fill"></rect>
+      <line x1="860" y1="174" x2="860" y2="220" class="line"/>
+      <line x1="846" y1="220" x2="828" y2="260" class="line"/>
+      <line x1="874" y1="220" x2="892" y2="260" class="line"/>
+      <line x1="846" y1="140" x2="806" y2="150" class="line"/>
+      <line x1="874" y1="140" x2="914" y2="150" class="line"/>
+
+      <!-- Desks (2 rows x 4) + students + phones -->
+      <!-- Row 1 -->
+      <g transform="translate(140,240)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+      <g transform="translate(360,240)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+      <g transform="translate(580,240)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+      <g transform="translate(800,240)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+
+      <!-- Row 2 -->
+      <g transform="translate(140,360)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+      <g transform="translate(360,360)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+      <g transform="translate(580,360)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+      <g transform="translate(800,360)">
+        <rect width="180" height="70" rx="8" class="desk"></rect>
+        <circle cx="40" cy="-28" r="18" class="line"></circle>
+        <line x1="40" y1="-10" x2="40" y2="20" class="line"/>
+        <rect x="120" y="14" width="22" height="32" rx="4" class="phone-screen" />
+      </g>
+    </svg>
+  </div>
 
   <div class="stats" data-reveal>
     <div class="stat">
@@ -553,6 +668,68 @@
       }, {threshold:.6})
     : null;
   counters.forEach(el => cObs?.observe(el));
+
+  /* ------- Classroom viz: scroll-driven phone colors ------- */
+  const viz = document.getElementById('classroomViz');
+  const phones = viz ? [...viz.querySelectorAll('.phone-screen')] : [];
+  const problemSection = document.getElementById('problem');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  // Map progress [0..1] to a bright, distracting HSL for each phone
+  function colorFor(i, t){
+    // stagger hues per phone; increase saturation & lightness subtly with t
+    const hue = (i*47 + t*260) % 360;
+    const sat = Math.round(lerp(15, 92, t));   // from muted to vivid
+    const light = Math.round(lerp(78, 56, t)); // slightly darker as it gets vivid
+    return `hsl(${hue} ${sat}% ${light}%)`;
+  }
+
+  let lastT = -1;
+  function updateViz(){
+    if (!viz || !problemSection || prefersReduced || document.body.classList.contains('solution-active')) return;
+    const r = problemSection.getBoundingClientRect();
+    const vh = innerHeight || document.documentElement.clientHeight;
+
+    // progress while the section is mostly on screen
+    const start = Math.min(vh * 0.9, vh);       // start when near entering
+    const end   = -Math.min(vh * 0.35, 300);    // finish before fully gone
+    const t = Math.max(0, Math.min(1, (start - r.top) / (start - end)));
+
+    if (Math.abs(t - lastT) < 0.015) return; // throttle small changes
+    lastT = t;
+
+    phones.forEach((p, i)=>{ p.style.fill = t <= 0.02 ? '#DDE4DF' : colorFor(i, t); });
+  }
+
+  let ticking=false;
+  if (viz && !prefersReduced){
+    window.addEventListener('scroll', ()=>{
+      if(ticking) return; ticking=true;
+      requestAnimationFrame(()=>{ updateViz(); ticking=false; });
+    }, {passive:true});
+    window.addEventListener('resize', ()=>updateViz());
+    updateViz();
+  }
+
+  // When solution section is visible, lock into calm green
+  const solutionSection = document.getElementById('solution');
+  if ('IntersectionObserver' in window && solutionSection){
+    const solObs = new IntersectionObserver(es=>{
+      es.forEach(e=>{
+        if (e.isIntersecting){
+          document.body.classList.add('solution-active');
+          // snap to green immediately
+          phones.forEach(p => p.style.fill = '');
+        }else{
+          document.body.classList.remove('solution-active');
+          updateViz(); // resume scroll colors
+        }
+      });
+    }, {threshold:.45});
+    solObs.observe(solutionSection);
+  }
 </script>
 </body>
 </html>
