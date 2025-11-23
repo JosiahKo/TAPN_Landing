@@ -369,17 +369,17 @@
       */
 
       // images
-      const aHold = (p <= 0.17) ? 1 : (p >= 0.27 ? 0 : 1 - seg(p, 0.17, 0.27));
-      const bFade = (p <= 0.17) ? 0 : (p <= 0.27 ? seg(p, 0.17, 0.27) : 1);
+      const aHold = (p <= 0.14) ? 1 : (p >= 0.24 ? 0 : 1 - seg(p, 0.14, 0.24));
+      const bFade = (p <= 0.14) ? 0 : (p <= 0.24 ? seg(p, 0.14, 0.24) : 1);
       f1.style.opacity = aHold.toFixed(3);
       f2.style.opacity = bFade.toFixed(3);
 
       // dim background once stats begin
-      const dim = (p <= 0.44) ? 0 : seg(p, 0.44, 0.54);
+      const dim = (p <= 0.38) ? 0 : seg(p, 0.38, 0.48);
       fog.style.background = `rgba(255,255,255,${(0.25*dim).toFixed(3)})`;
 
       // stats sequence
-      show(fact1, seg(p, 0.44, 0.56));
+      show(fact1, seg(p, 0.38, 0.56));
       show(fact2, seg(p, 0.56, 0.68));
       show(fact3, seg(p, 0.68, 0.80));
 
