@@ -81,6 +81,7 @@
   .pin{position:sticky; top:0; height:100vh; overflow:hidden; isolation:isolate}
   .scene{position:absolute; inset:0; z-index:0}
   .frame{position:absolute; inset:0; display:grid; place-items:center; opacity:0; transition:opacity .2s}
+  /* Ensure the entire image fits, no cropping */
   .frame img{width:100vw; height:100vh; object-fit:contain; object-position:center center; display:block}
   .fog{position:absolute; inset:0; background:rgba(255,255,255,.0); z-index:1; pointer-events:none}
 
@@ -95,14 +96,13 @@
   .kpi{font-weight:800; font-size:clamp(1.7rem,4vw,2.5rem); letter-spacing:-.01em}
   .bars-card{grid-column:1/4; opacity:0; transform:translateY(12px); transition:opacity .25s, transform .25s}
 
-  /* Bar chart that can fill from 0 → target */
+  /* Bar chart (flex model: green width animates, gray flexes to remainder) */
   .bar-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; margin-bottom:.5rem; color:var(--muted)}
-  .bar-track{position:relative; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1}
-  #bars .bar-fill{position:absolute; inset:0 auto 0 0; width:100%; background:var(--brand); transform-origin:left center; transform:scaleX(0); transition:transform .001s}
+  .bar{display:flex; align-items:stretch; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1}
+  .bar + .bar{margin-top:.35rem}
+  .bar .bar-fill{background:var(--brand); height:12px; width:0%} /* JS animates width */
+  .bar .off{flex:1; background:#DDE4DF}
   .bar-meta{display:flex; justify-content:space-between; font-size:.9rem; color:var(--muted)}
-  .bar { display:flex; align-items:stretch; }
-  .bar .bar-fill { background: var(--brand); height: 12px; }
-  .bar .off { flex: 1; background: #DDE4DF; }
 
   /* SOLUTION / HOW IT WORKS */
   .section{padding:5rem 0; position:relative}
@@ -204,27 +204,28 @@
 
           <!-- BARS: appear first empty, then fills animate in as you keep scrolling -->
           <div class="card bars-card" id="bars">
-          <div class="bar-title"><span>Typical class</span><span>On-task vs. distracted</span></div>
-        
-          <!-- WITHOUT TAPN -->
-          <div class="bar" aria-label="Without TAPN" style="margin-bottom:.45rem">
-            <div class="bar-fill on" data-target="0.60" style="width:0%"></div>
-            <div class="off"></div>
-          </div>
-          <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-bottom:.8rem">
-            <span>Without TAPN</span><span>60% / 40%</span>
-          </div>
-        
-          <!-- WITH TAPN -->
-          <div class="bar" aria-label="With TAPN">
-            <div class="bar-fill on" data-target="0.85" style="width:0%"></div>
-            <div class="off"></div>
-          </div>
-          <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-top:.35rem">
-            <span>With TAPN</span><span>85% / 15%</span>
-          </div>
+            <div class="bar-title"><span>Typical class</span><span>On-task vs. distracted</span></div>
+
+            <!-- WITHOUT TAPN -->
+            <div class="bar" aria-label="Without TAPN" style="margin-bottom:.45rem">
+              <div class="bar-fill on" data-target="0.60" style="width:0%"></div>
+              <div class="off"></div>
+            </div>
+            <div class="bar-meta" style="margin-bottom:.8rem">
+              <span>Without TAPN</span><span>60% / 40%</span>
+            </div>
+
+            <!-- WITH TAPN -->
+            <div class="bar" aria-label="With TAPN">
+              <div class="bar-fill on" data-target="0.85" style="width:0%"></div>
+              <div class="off"></div>
+            </div>
+            <div class="bar-meta" style="margin-top:.35rem">
+              <span>With TAPN</span><span>85% / 15%</span>
+            </div>
+          </div><!-- /bars-card -->
         </div>
-      </div>
+      </div><!-- /stats-wrap -->
     </div><!-- /pin -->
   </div><!-- /scrolly -->
 </section>
@@ -342,31 +343,29 @@
     const f1 = document.getElementById('f1');    // attentive
     const f2 = document.getElementById('f2');    // phones
     const fog = document.getElementById('fog');
-  
+
     const fact1 = document.getElementById('fact1');
     const fact2 = document.getElementById('fact2');
     const fact3 = document.getElementById('fact3');
     const bars  = document.getElementById('bars');
-  
-    // Select green fills; fallback to .on if .bar-fill not present
-    const fills = Array.from(document.querySelectorAll('#bars .bar-fill, #bars .bar .on'));
+
+    // Select green fills
+    const fills = Array.from(document.querySelectorAll('#bars .bar-fill'));
     const targets = fills.map((el,i)=>{
       const t = parseFloat(el.getAttribute('data-target'));
-      if (!isNaN(t)) return Math.max(0, Math.min(1, t));
-      return i === 0 ? 0.60 : 0.85; // fallback
+      return isNaN(t) ? (i===0 ? 0.60 : 0.85) : Math.max(0, Math.min(1, t));
     });
-  
+
     const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
     const seg   = (p,a,b)=> clamp((p-a)/(b-a), 0, 1); // normalized 0..1 inside [a,b]
     const show  = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1-t)*12}px)`; };
-  
-    // Timeline (shorter image holds + bars appear then fill, then hold)
+
+    // Timeline (short image holds + bars appear then fill, then hold)
     const TL = {
       attEnd:        0.14, // attentive hold ends
       xfadeEnd:      0.24, // crossfade ends
       phonesEnd:     0.34, // phones hold ends / stats start
-  
-      // make sure each end is strictly greater than the previous (avoid 0/0)
+
       fact1End:      0.40, // first stat ends
       fact2End:      0.50,
       fact3End:      0.60,
@@ -374,40 +373,39 @@
       barsFillEnd:   0.88, // green bars fill to target
       // 0.88 → 1.00 = final hold on bars
     };
-  
+
     function onScroll(){
       const vh = innerHeight || document.documentElement.clientHeight;
       const rect = scrolly.getBoundingClientRect();
       const total = scrolly.offsetHeight - vh;
       const p = clamp((0 - rect.top) / total, 0, 1); // progress 0..1
-  
+
       /* Images */
       const aHold = (p <= TL.attEnd) ? 1 : (p >= TL.xfadeEnd ? 0 : 1 - seg(p, TL.attEnd, TL.xfadeEnd));
       const bFade = (p <= TL.attEnd) ? 0 : (p <= TL.xfadeEnd ? seg(p, TL.attEnd, TL.xfadeEnd) : 1);
       f1.style.opacity = aHold.toFixed(3);
       f2.style.opacity = bFade.toFixed(3);
-  
+
       /* Dim background as stats begin */
       const dim = (p <= TL.phonesEnd) ? 0 : seg(p, TL.phonesEnd, TL.phonesEnd + 0.10);
       fog.style.background = `rgba(255,255,255,${(0.25*dim).toFixed(3)})`;
-  
+
       /* Stats sequence */
       show(fact1, seg(p, TL.phonesEnd, TL.fact1End));
       show(fact2, seg(p, TL.fact1End, TL.fact2End));
       show(fact3, seg(p, TL.fact2End, TL.fact3End));
-  
+
       /* Bars appear (empty), then fill, then hold */
       const barsAppear = seg(p, TL.fact3End, TL.barsAppearEnd);
       show(bars, barsAppear);
       if (p >= TL.barsAppearEnd) show(bars, 1); // fully visible
-  
+
       const fillT = seg(p, TL.barsAppearEnd, TL.barsFillEnd); // 0→1 over the fill segment
       fills.forEach((el, i)=>{
-        const pct = (targets[i] * fillT * 100);
-        el.style.width = pct.toFixed(1) + '%';  // animate green width
+        el.style.width = (targets[i] * fillT * 100).toFixed(1) + '%';
       });
     }
-  
+
     onScroll();
     addEventListener('scroll', onScroll, {passive:true});
     addEventListener('resize', onScroll, {passive:true});
