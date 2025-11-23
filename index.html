@@ -383,7 +383,11 @@
       const aHold = (p <= TL.attEnd) ? 1 : (p >= TL.xfadeEnd ? 0 : 1 - seg(p, TL.attEnd, TL.xfadeEnd));
       const bFade = (p <= TL.attEnd) ? 0 : (p <= TL.xfadeEnd ? seg(p, TL.attEnd, TL.xfadeEnd) : 1);
       
+      f1.style.opacity = aHold.toFixed(3);
+      f2.style.opacity = bFade.toFixed(3);      
       const dim = (p <= TL.phonesEnd) ? 0 : seg(p, TL.phonesEnd, TL.phonesEnd + 0.10);
+      fog.style.background = `rgba(255,255,255,${(0.25*dim).toFixed(3)})`;
+
       show(fact1, seg(p, TL.phonesEnd, TL.fact1End));
       show(fact2, seg(p, TL.fact1End, TL.fact2End));
       show(fact3, seg(p, TL.fact2End, TL.fact3End));
