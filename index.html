@@ -15,172 +15,115 @@
 
 <style>
   :root{
-    --bg:#F7F8F4;     --bg2:#EEF2EE;
-    --ink:#0F1B17;    --muted:#5F6B66;
-    --panel:#FFFFFF;  --line:#E5EAE5;
-    --brand:#29B087;  --ring:rgba(41,176,135,.26);
-    --radius:14px;
+    --bg:#F7F8F4; --bg2:#EEF2EE;
+    --ink:#0F1B17; --muted:#5F6B66;
+    --panel:#FFFFFF; --line:#E5EAE5;
+    --brand:#29B087; --radius:14px;
   }
-
-  *{ box-sizing:border-box; }
-  html, body{ height:100%; }
-  html{ scroll-behavior:smooth; }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  html{scroll-behavior:smooth}
   body{
-    margin:0;
-    font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-    color: var(--ink);
+    margin:0; color:var(--ink);
+    font-family:"Plus Jakarta Sans",system-ui,-apple-system,Segoe UI,Roboto,Arial;
     background: var(--bg);
     background-image:
       radial-gradient(1200px 520px at 10% -12%, color-mix(in srgb, var(--brand) 6%, transparent), transparent 55%),
       radial-gradient(1200px 520px at 95% -18%, color-mix(in srgb, var(--bg2) 35%, transparent), transparent 60%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    background-repeat:no-repeat; background-attachment:fixed;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     line-height:1.6; letter-spacing:.005em;
-    position: relative; isolation: isolate;
-    transition: background-color .6s ease, color .4s ease, background-image .9s ease;
+    position:relative; isolation:isolate;
   }
-
-  /* grain */
   body::before{
-    content:""; position: fixed; inset:0; pointer-events:none; z-index:0;
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
     opacity:.18; mix-blend-mode:multiply;
     background-image:
       url('assets/grain.png'),
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='400' height='400' filter='url(%23n)' opacity='0.55'/></svg>");
-    background-size:420px, 400px; background-repeat:repeat, repeat;
+    background-size:420px,400px; background-repeat:repeat,repeat;
   }
 
-  h1, h2, h3{ font-family: Manrope, "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial; letter-spacing:-.01em; }
-  a{ color:inherit; text-decoration:none; }
-  .container{ width:min(1120px, 92vw); margin:0 auto; position:relative; z-index:1; }
-  .narrow{ width:min(880px, 92vw);  margin:0 auto; position:relative; z-index:1; }
-  .muted{ color:var(--muted); }
+  h1,h2,h3{font-family:Manrope,"Plus Jakarta Sans",system-ui,-apple-system,Segoe UI,Roboto,Arial; letter-spacing:-.01em}
+  a{color:inherit; text-decoration:none}
+  .container{width:min(1120px,92vw); margin:0 auto; position:relative; z-index:1}
+  .narrow{width:min(880px,92vw); margin:0 auto; position:relative; z-index:1}
+  .muted{color:var(--muted)}
 
   /* NAV */
-  header.nav{
-    position:sticky; top:0; z-index:40;
-    backdrop-filter: blur(10px) saturate(130%);
-    background: color-mix(in srgb, var(--bg) 70%, transparent);
-    border-bottom:1px solid var(--line);
-  }
-  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:.9rem 0; }
-  .brand{ display:flex; align-items:center; gap:.6rem; font-weight:800; letter-spacing:.01em; }
-  .logo{ width:24px; height:24px; border-radius:6px; background: radial-gradient(140% 140% at 0% 0%, #2E5C4C 0%, var(--brand) 70%, #2E5C4C 100%); }
-  .nav-links{ display:flex; gap:1rem; align-items:center; }
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
-    padding:.72rem 1rem; border-radius:999px; font-weight:700;
-    border:1px solid var(--brand); color:#05241A; background:var(--brand);
-    transition: transform .18s ease, box-shadow .18s ease;
-  }
-  .btn:hover{ transform:translateY(-2px); box-shadow:0 8px 28px color-mix(in srgb, var(--brand) 22%, transparent); }
-  .btn.ghost{ color:var(--ink); background:transparent; border-color:var(--line); }
+  header.nav{position:sticky; top:0; z-index:40; backdrop-filter:blur(10px) saturate(130%); background:color-mix(in srgb,var(--bg) 70%,transparent); border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:.9rem 0}
+  .brand{display:flex; align-items:center; gap:.6rem; font-weight:800}
+  .logo{width:24px; height:24px; border-radius:6px; background:radial-gradient(140% 140% at 0% 0%, #2E5C4C 0%, var(--brand) 70%, #2E5C4C 100%)}
+  .nav-links{display:flex; gap:1rem; align-items:center}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:.55rem; padding:.72rem 1rem; border-radius:999px; font-weight:700; border:1px solid var(--brand); color:#05241A; background:var(--brand); transition:transform .18s, box-shadow .18s}
+  .btn:hover{transform:translateY(-2px); box-shadow:0 8px 28px color-mix(in srgb,var(--brand) 22%,transparent)}
+  .btn.ghost{color:var(--ink); background:transparent; border-color:var(--line)}
 
   /* HERO */
-  .hero{ padding: 9rem 0 5rem; position:relative; overflow:clip; }
-  .h1{ font-size: clamp(2.6rem, 5.6vw, 5rem); line-height:1.02; margin:0 0 1rem; font-weight:800; }
-  .lead{ color:var(--muted); font-size: clamp(1rem, 2.1vw, 1.1rem); margin:0; }
-  .hero-cta{ display:flex; gap:.8rem; align-items:center; margin-top:1.4rem; }
-  .kicker{ display:inline-flex; align-items:center; gap:.45rem; font-size:.85rem; border:1px solid var(--line); padding:.25rem .55rem; border-radius:999px; background:var(--panel); font-weight:600; }
-  .rotator{ display:inline-grid; min-width:7ch; vertical-align:baseline; }
-  .rotator span{ grid-area:1/1; opacity:0; transform:translateY(8px); transition:opacity .6s ease, transform .6s ease; }
-  .rotator span.in{ opacity:1; transform:translateY(0); }
+  .hero{padding:9rem 0 5rem; position:relative; overflow:clip}
+  .h1{font-size:clamp(2.6rem,5.6vw,5rem); line-height:1.02; margin:0 0 1rem; font-weight:800}
+  .lead{color:var(--muted); font-size:clamp(1rem,2.1vw,1.1rem); margin:0}
+  .hero-cta{display:flex; gap:.8rem; align-items:center; margin-top:1.4rem}
+  .kicker{display:inline-flex; align-items:center; gap:.45rem; font-size:.85rem; border:1px solid var(--line); padding:.25rem .55rem; border-radius:999px; background:var(--panel); font-weight:600}
+  .rotator{display:inline-grid; min-width:7ch; vertical-align:baseline}
+  .rotator span{grid-area:1/1; opacity:0; transform:translateY(8px); transition:opacity .6s, transform .6s}
+  .rotator span.in{opacity:1; transform:translateY(0)}
+  .preview{margin-top:3rem; display:grid; grid-template-columns:1.05fr .95fr; gap:2rem; align-items:center}
+  .phone{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:1rem; aspect-ratio:4/3}
+  .row{display:flex; align-items:center; justify-content:space-between; padding:.7rem .85rem; border:1px solid var(--line); border-radius:10px}
+  .row + .row{margin-top:.7rem}
+  .pill{padding:.25rem .55rem; border-radius:999px; border:1px solid var(--line); font-size:.82rem}
 
-  .preview{ margin-top: 3rem; display:grid; grid-template-columns: 1.05fr .95fr; gap: 2rem; align-items:center; }
-  .phone{ background:var(--panel); border:1px solid var(--line); border-radius: var(--radius); padding:1rem; aspect-ratio: 4/3; will-change: transform; }
-  .row{ display:flex; align-items:center; justify-content:space-between; padding:.7rem .85rem; border:1px solid var(--line); border-radius:10px; }
-  .row + .row{ margin-top:.7rem; }
-  .pill{ padding:.25rem .55rem; border-radius:999px; border:1px solid var(--line); font-size:.82rem; }
+  /* PINNED PROBLEM / SCROLLY */
+  #problem{position:relative}
+  .scrolly{height:800vh} /* controls total “story” length */
+  .pin{position:sticky; top:0; height:100vh; overflow:hidden; isolation:isolate}
+  .scene{position:absolute; inset:0; z-index:0}
+  .frame{position:absolute; inset:0; display:grid; place-items:center; opacity:0; transition:opacity .2s}
+  .frame img{width:100vw; height:100vh; object-fit:contain; object-position:center center; display:block}
+  .fog{position:absolute; inset:0; background:rgba(255,255,255,.0); z-index:1; pointer-events:none}
 
-  .section{ padding:5rem 0; position:relative; }
-  .section h2{ font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin:0 0 .8rem; font-weight:800; }
-  .hairline{ border-top:1px solid var(--line); }
+  .issue-head{position:absolute; left:clamp(16px,4vw,40px); top:clamp(14px,4vh,32px); z-index:2; display:grid; gap:.6rem}
+  .issue-head h2{font-size:clamp(2rem,5vw,3.2rem); font-weight:800; margin:0}
+  .issue-head p{margin:0; font-weight:600; color:#2b2f2d; background:rgba(255,255,255,.8); border:1px solid var(--line); padding:.55rem .8rem; border-radius:12px; backdrop-filter:saturate(120%) blur(2px)}
 
-  /* ===== PROBLEM - Pinned scrollytelling scene ===== */
-  #problem{ padding:0; }
-  .scene{ height: 280vh; /* total scroll budget for the scene */ }
-  .pin{
-    position: sticky; top: 0; height: 100vh; overflow:hidden;
-    background: var(--bg);
-  }
-  .frame{
-    position:absolute; inset:0; display:grid; place-items:center;
-    will-change:opacity, transform;
-  }
-  .frame img{
-    width: min(1400px, 100vw);
-    height: 100vh; /* keep full height in view */
-    object-fit: contain;         /* no cropping */
-    object-position: center center;
-    user-select:none; pointer-events:none;
-    transform: translateZ(0);    /* helps some GPUs */
-  }
+  .stats-wrap{position:absolute; inset:0; display:grid; place-items:center; z-index:3; pointer-events:none}
+  .stats-grid{width:min(1120px,92vw); display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.1rem}
+  .fact{opacity:0; transform:translateY(12px); transition:opacity .25s, transform .25s}
+  .kpi{font-weight:800; font-size:clamp(1.7rem,4vw,2.5rem); letter-spacing:-.01em}
+  .bars-card{grid-column:1/4; opacity:0; transform:translateY(12px); transition:opacity .25s, transform .25s}
 
-  /* headline overlay (always visible) */
-  .issue-head{
-    position:absolute; left:min(4vw, 48px); top:min(7vh, 80px); z-index:2;
-    display:grid; gap:.4rem;
-    max-width:min(780px, 90vw);
-    padding:.6rem .9rem;
-    border-radius:12px;
-    backdrop-filter: blur(2px);
-    background: color-mix(in srgb, var(--panel) 72%, transparent);
-  }
-  .issue-head h2{
-    margin:0; font-weight:800;
-    font-size: clamp(2.2rem, 4.6vw, 3.2rem); line-height:1.05; letter-spacing:-.01em;
-  }
-  .issue-head p{ margin:0; color:var(--muted); font-size: clamp(1rem, 2vw, 1.125rem); }
+  .bar-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; margin-bottom:.5rem; color:var(--muted)}
+  .bar{display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1}
+  .bar .on{background:var(--brand)}
+  .bar .off{background:#DDE4DF}
 
-  /* stats overlay (appears after images) */
-  .stats-overlay{
-    position:absolute; inset:0; display:grid; place-items:center; z-index:3;
-    pointer-events:none; /* purely visual overlay */
-  }
-  .stats-wrap{
-    width:min(1120px, 92vw);
-    display:grid; gap:1rem;
-  }
-  .stats-grid{
-    display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem;
-  }
-  .stat-card{
-    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.2rem 1.2rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,.04);
-    transform: translateY(16px); opacity:0;
-    transition: transform .6s cubic-bezier(.2,.65,.2,1), opacity .6s ease;
-  }
-  .stat-card.in{ transform:none; opacity:1; }
-  .kpi{ font-weight:800; font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing:-.01em; }
-  .stat-card p{ margin:.35rem 0 0; color:var(--muted); }
+  /* SOLUTION / HOW IT WORKS */
+  .section{padding:5rem 0; position:relative}
+  .section h2{font-size:clamp(1.6rem,2.6vw,2.2rem); margin:0 0 .8rem; font-weight:800}
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem}
+  .step-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem}
+  .step{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.1rem}
+  .num{width:24px; height:24px; border-radius:50%; display:inline-grid; place-items:center; border:1px solid var(--line); font-size:.85rem; margin-right:.5rem}
+  .hairline{border-top:1px solid var(--line)}
 
-  .bars-card{
-    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.1rem;
-    transform: translateY(16px); opacity:0; transition: transform .6s cubic-bezier(.2,.65,.2,1), opacity .6s ease;
-  }
-  .bars-card.in{ transform:none; opacity:1; }
-  .bar-label{ display:flex; justify-content:space-between; font-size:.9rem; color:var(--muted); }
-  .bars{ display:grid; gap:.6rem; margin-top:.6rem; }
-  .bar{ display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1; }
-  .seg-on{ background:var(--brand); }
-  .seg-off{ background:#DDE4DF; }
+  /* Reveal helper for non-pinned sections */
+  [data-reveal]{opacity:1; transform:none}
+  .js [data-reveal]{opacity:0; transform:translateY(16px) scale(.985); filter:blur(4px); transition:opacity .6s, transform .6s, filter .6s}
+  .js [data-reveal].in{opacity:1; transform:none; filter:none}
 
-  /* MOBILE tweaks */
-  @media (max-width: 900px){
-    .nav-links{ display:none; }
-    .preview{ grid-template-columns: 1fr; }
-    .stats-grid{ grid-template-columns: 1fr; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    html{ scroll-behavior:auto; }
-    .stat-card, .bars-card{ transition:none !important; transform:none !important; opacity:1 !important; }
+  /* Mobile */
+  @media (max-width:900px){
+    .nav-links{display:none}
+    .preview{grid-template-columns:1fr}
+    .stats-grid{grid-template-columns:1fr}
   }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <header class="nav">
   <div class="container nav-inner">
     <a href="#top" class="brand"><span class="logo" aria-hidden="true"></span><span>TAPN</span></a>
@@ -193,26 +136,24 @@
   </div>
 </header>
 
-<!-- HERO -->
-<main id="top" class="hero" data-theme="tone1">
+<main id="top" class="hero">
   <div class="narrow">
-    <span class="kicker">Tap-to-focus</span>
-    <h1 class="h1">
-      help students with
+    <span class="kicker" data-reveal>Tap-to-focus</span>
+    <h1 class="h1" data-reveal>help students with
       <span class="rotator" id="rot"><span class="in">focus</span><span>learning</span><span>one tap</span></span>
     </h1>
-    <p class="lead">Tap in at the door. Class Mode turns on. Attendance logs automatically.</p>
-    <div class="hero-cta">
+    <p class="lead" data-reveal>Tap in at the door. Class Mode turns on. Attendance logs automatically.</p>
+    <div class="hero-cta" data-reveal>
       <a class="btn" href="#waitlist">Join the pilot</a>
       <a class="btn ghost" href="#how">How it works</a>
     </div>
 
     <div class="preview">
-      <div class="muted">
-        <p><strong>What it is</strong><br> A tap-in device + mobile app that blocks distracting apps during class and records attendance.</p>
-        <p style="margin-top:1rem;"><strong>Why it matters</strong><br> Fewer distractions, calmer rooms, more time on task.</p>
+      <div class="muted" data-reveal>
+        <p><strong>What it is</strong><br>A tap-in device + mobile app that blocks distracting apps during class and records attendance.</p>
+        <p style="margin-top:1rem;"><strong>Why it matters</strong><br>Fewer distractions, calmer rooms, more time on task.</p>
       </div>
-      <div class="phone" aria-label="Class Mode mock" id="heroPhone">
+      <div class="phone" id="heroPhone" data-reveal>
         <div class="row"><span>Room 203 · Algebra</span><span class="pill">Class Mode: On</span></div>
         <div class="row"><span>Allowed</span><span class="pill">Phone · Notes · Camera</span></div>
         <div class="row"><span>Timer</span><span class="pill" id="demoTimer">50:00</span></div>
@@ -224,92 +165,77 @@
 
 <div class="hairline"></div>
 
-<!-- ===== PROBLEM (pinned scene + staged stats) ===== -->
-<section id="problem" data-theme="tone2">
-  <div class="scene" id="classroomScene">
+<!-- PROBLEM / SCROLLY PIN -->
+<section id="problem" class="section">
+  <div class="scrolly" id="scrolly">
     <div class="pin" id="pin">
-      <!-- headline -->
+      <!-- classroom layers -->
+      <div class="scene">
+        <div class="frame" id="f1"><img src="assets/classroom-attentive.jpg" alt="Students attentive in class"></div>
+        <div class="frame" id="f2"><img src="assets/classroom-phones.jpg" alt="Some students on phones in class"></div>
+        <div class="fog" id="fog"></div>
+      </div>
+
+      <!-- heading overlay -->
       <div class="issue-head">
         <h2>The issue</h2>
         <p>Phones are crushing classroom focus. Here’s the scale — short and sharp.</p>
       </div>
 
-      <!-- frames -->
-      <div class="frame" id="f1" style="opacity:1;">
-        <img src="assets/classroom-attentive.jpg" alt="Classroom, students attentive to the teacher">
-      </div>
-      <div class="frame" id="f2" style="opacity:0;">
-        <img src="assets/classroom-phones.jpg" alt="Classroom, several students looking down at phones">
-      </div>
-
-      <!-- stats overlay (revealed after crossfade) -->
-      <div class="stats-overlay" id="statsOverlay" style="opacity:0;">
-        <div class="stats-wrap">
-          <div class="stats-grid">
-            <div class="stat-card" data-step="1">
-              <div class="kpi"><span class="count" data-count="42">0</span>%</div>
-              <p>of class time risks going off-task on devices.</p>
-            </div>
-            <div class="stat-card" data-step="2">
-              <div class="kpi">−<span class="count" data-count="15">0</span> min</div>
-              <p>lost per 50-minute class to phone distractions.</p>
-            </div>
-            <div class="stat-card" data-step="3">
-              <div class="kpi"><span class="count" data-count="78">0</span>%</div>
-              <p>teachers say phones directly reduce learning quality.</p>
-            </div>
+      <!-- stats overlay (revealed in sequence) -->
+      <div class="stats-wrap">
+        <div class="stats-grid">
+          <div class="card fact" id="fact1">
+            <div class="kpi">42%</div>
+            <p class="muted" style="margin:.35rem 0 0">of class time risks going off-task on devices.</p>
+          </div>
+          <div class="card fact" id="fact2">
+            <div class="kpi">−15 min</div>
+            <p class="muted" style="margin:.35rem 0 0">lost per 50-minute class to phone distractions.</p>
+          </div>
+          <div class="card fact" id="fact3">
+            <div class="kpi">78%</div>
+            <p class="muted" style="margin:.35rem 0 0">teachers say phones directly reduce learning quality.</p>
           </div>
 
-          <div class="bars-card" data-step="4">
-            <div class="bar-label"><span>Typical class</span><span>On-task vs. distracted</span></div>
-            <div class="bars">
-              <div class="bar" aria-label="Without TAPN">
-                <div class="seg-on" style="width:60%"></div>
-                <div class="seg-off" style="width:40%"></div>
-              </div>
-              <div class="bar-label"><span>Without TAPN</span><span>60% / 40%</span></div>
-
-              <div class="bar" aria-label="With TAPN">
-                <div class="seg-on" style="width:85%"></div>
-                <div class="seg-off" style="width:15%"></div>
-              </div>
-              <div class="bar-label"><span>With TAPN</span><span>85% / 15%</span></div>
+          <div class="card bars-card" id="bars">
+            <div class="bar-title"><span>Typical class</span><span>On-task vs. distracted</span></div>
+            <div class="bar" aria-label="Without TAPN" style="margin-bottom:.45rem">
+              <div class="on" style="width:60%"></div><div class="off" style="width:40%"></div>
+            </div>
+            <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-bottom:.8rem">
+              <span>Without TAPN</span><span>60% / 40%</span>
+            </div>
+            <div class="bar" aria-label="With TAPN">
+              <div class="on" style="width:85%"></div><div class="off" style="width:15%"></div>
+            </div>
+            <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-top:.35rem">
+              <span>With TAPN</span><span>85% / 15%</span>
             </div>
           </div>
         </div>
       </div>
-      <!-- /stats overlay -->
-    </div>
-  </div>
+    </div><!-- /pin -->
+  </div><!-- /scrolly -->
 </section>
 
 <div class="hairline"></div>
 
 <!-- SOLUTION -->
-<section id="solution" class="section narrow" data-theme="tone3">
-  <h2>Our solution</h2>
-  <p class="muted">One tap at the door turns on Class Mode: essentials stay, distractions go, attendance logs itself.</p>
-
-  <div class="cards">
+<section id="solution" class="section container">
+  <h2 data-reveal>Our solution</h2>
+  <p class="muted" data-reveal>One tap at the door turns on Class Mode: essentials stay, distractions go, attendance logs itself.</p>
+  <div class="cards" data-reveal>
     <div class="card">
-      <h3>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" stroke="currentColor"/><path d="M3 21L21 3" stroke="currentColor"/></svg>
-        Block the noise
-      </h3>
+      <h3>🪄 Block the noise</h3>
       <p class="muted">Auto-enforced allow-list during class. Notes, Camera, and teacher-approved apps only.</p>
     </div>
     <div class="card">
-      <h3>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor"/><path d="M12 7v6l4 2" stroke="currentColor"/></svg>
-        More time on task
-      </h3>
+      <h3>🕒 More time on task</h3>
       <p class="muted">Fewer interruptions → calmer rooms → minutes back every period.</p>
     </div>
     <div class="card">
-      <h3>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h10M4 12h10M4 18h10" stroke="currentColor"/><path d="M17 13l2 2 4-4" stroke="currentColor"/></svg>
-        Attendance, done
-      </h3>
+      <h3>🧾 Attendance, done</h3>
       <p class="muted">Tap-in records who’s present. Exportable logs — no extra steps.</p>
     </div>
   </div>
@@ -318,68 +244,28 @@
 <div class="hairline"></div>
 
 <!-- HOW IT WORKS -->
-<section id="how" class="section narrow" data-theme="tone5">
-  <h2>How it works</h2>
-  <div class="steps">
-    <div class="step">
-      <p><span class="num">1</span><strong>Tap in</strong></p>
-      <p class="muted">Students tap the device; phones switch to Class Mode.</p>
-    </div>
-    <div class="step">
-      <p><span class="num">2</span><strong>Focus</strong></p>
-      <p class="muted">Only essential apps are accessible during class.</p>
-    </div>
-    <div class="step">
-      <p><span class="num">3</span><strong>Unlock</strong></p>
-      <p class="muted">Timer ends → phones return to normal, or tap out early.</p>
-    </div>
+<section id="how" class="section container">
+  <h2 data-reveal>How it works</h2>
+  <div class="step-grid" data-reveal>
+    <div class="step"><p><span class="num">1</span><strong>Tap in</strong></p><p class="muted">Students tap the device; phones switch to Class Mode.</p></div>
+    <div class="step"><p><span class="num">2</span><strong>Focus</strong></p><p class="muted">Only essential apps are accessible during class.</p></div>
+    <div class="step"><p><span class="num">3</span><strong>Unlock</strong></p><p class="muted">Timer ends → phones return to normal, or tap out early.</p></div>
   </div>
 </section>
 
 <div class="hairline"></div>
 
-<!-- FAQ -->
-<section id="faq" class="section narrow" data-theme="tone4">
-  <h2>FAQ</h2>
-  <details>
-    <summary>Does TAPN read student content?</summary>
-    <p class="muted">No. TAPN only manages policy state (which apps are allowed) and timestamps. We don’t capture messages, browsing, or photos.</p>
-  </details>
-  <details>
-    <summary>What phones are supported?</summary>
-    <p class="muted">iOS and Android. Students install a lightweight companion app that listens for the tap-in signal and applies school policies.</p>
-  </details>
-  <details>
-    <summary>What if a student doesn’t tap in?</summary>
-    <p class="muted">Attendance won’t log for that student. Schools can require tap-in for attendance or network access.</p>
-  </details>
-</section>
-
-<div class="hairline"></div>
-
 <!-- WAITLIST -->
-<section id="waitlist" class="section narrow" data-theme="tone3">
-  <h2>Join the pilot</h2>
-  <p class="muted">Tell us about your school. We’ll reach out within 2 business days.</p>
-  <form action="https://formspree.io/f/mzzklrdw" method="POST" class="narrow" style="display:grid; gap:.9rem; grid-template-columns: 1fr 1fr;">
+<section id="waitlist" class="section narrow">
+  <h2 data-reveal>Join the pilot</h2>
+  <p class="muted" data-reveal>Tell us about your school. We’ll reach out within 2 business days.</p>
+  <form action="https://formspree.io/f/mzzklrdw" method="POST" class="narrow" style="display:grid; gap:.9rem; grid-template-columns:1fr 1fr" data-reveal>
     <input type="hidden" name="_subject" value="TAPN pilot request">
     <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none">
-    <label style="display:grid; gap:.25rem;">
-      <span>Full name</span>
-      <input name="name" required placeholder="Jane Smith" />
-    </label>
-    <label style="display:grid; gap:.25rem;">
-      <span>Work email</span>
-      <input name="email" type="email" required placeholder="jane@school.org" />
-    </label>
-    <label style="grid-column:1/3; display:grid; gap:.25rem;">
-      <span>School / District</span>
-      <input name="org" required placeholder="Riverview High School" />
-    </label>
-    <label style="grid-column:1/3; display:grid; gap:.25rem;">
-      <span>Anything else we should know?</span>
-      <textarea name="note" rows="3" placeholder="Short description"></textarea>
-    </label>
+    <label style="display:grid; gap:.25rem;"><span>Full name</span><input name="name" required placeholder="Jane Smith" /></label>
+    <label style="display:grid; gap:.25rem;"><span>Work email</span><input name="email" type="email" required placeholder="jane@school.org" /></label>
+    <label style="grid-column:1/3; display:grid; gap:.25rem;"><span>School / District</span><input name="org" required placeholder="Riverview High School" /></label>
+    <label style="grid-column:1/3; display:grid; gap:.25rem;"><span>Anything else we should know?</span><textarea name="note" rows="3" placeholder="Short description"></textarea></label>
     <div style="grid-column:1/3; display:flex; justify-content:space-between; align-items:center; gap:.8rem; flex-wrap:wrap;">
       <small class="muted">By submitting, you agree to our <a href="#" style="text-decoration:underline;">Privacy Policy</a>.</small>
       <button class="btn" type="submit">Join</button>
@@ -389,12 +275,10 @@
 
 <div class="hairline"></div>
 
-<!-- FOOTER -->
 <footer class="section">
   <div class="narrow" style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
     <div style="display:flex; align-items:center; gap:.6rem;">
-      <span class="logo" aria-hidden="true"></span>
-      <strong>TAPN</strong>
+      <span class="logo" aria-hidden="true"></span><strong>TAPN</strong>
       <span class="muted">© <span id="y"></span></span>
     </div>
     <a class="muted" href="mailto:teamtapn@gmail.com">teamtapn@gmail.com</a>
@@ -402,128 +286,99 @@
 </footer>
 
 <script>
+  document.documentElement.classList.add('js');
+
+  /* simple reveal for non-pinned sections */
+  const revealer = ('IntersectionObserver' in window)
+    ? new IntersectionObserver(es => es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('in'); revealer.unobserve(e.target);} }), {threshold:.12})
+    : null;
+  document.querySelectorAll('[data-reveal]').forEach(el => revealer?.observe(el));
+
+  /* footer year */
   document.getElementById('y').textContent = new Date().getFullYear();
 
-  // word rotator
-  (function(){
-    const rot = document.getElementById('rot');
-    if (!rot || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const nodes = [...rot.querySelectorAll('span')];
-    let i = 0;
-    setInterval(()=>{ nodes[i].classList.remove('in'); i=(i+1)%nodes.length; nodes[i].classList.add('in'); }, 2400);
-  })();
+  /* rotator */
+  const rot = document.getElementById('rot');
+  if (rot && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const nodes=[...rot.querySelectorAll('span')]; let i=0;
+    setInterval(()=>{nodes[i].classList.remove('in'); i=(i+1)%nodes.length; nodes[i].classList.add('in');},2400);
+  }
 
-  // tiny parallax for hero phone
-  (function(){
-    const phone = document.getElementById('heroPhone');
-    if(!phone) return;
+  /* hero phone tiny parallax */
+  const phone = document.getElementById('heroPhone');
+  if (phone){
     let ticking=false;
     addEventListener('scroll', ()=>{
       if(ticking) return; ticking=true;
       requestAnimationFrame(()=>{
-        const r = phone.getBoundingClientRect();
-        const vh = innerHeight || document.documentElement.clientHeight;
+        const r = phone.getBoundingClientRect(), vh = innerHeight;
         const center = (r.top + r.height/2) - vh/2;
-        const t = Math.max(Math.min(center*0.05, 24), -24);
-        phone.style.transform = `translateY(${t}px)`;
+        phone.style.transform = `translateY(${Math.max(Math.min(center*0.05,24),-24)}px)`;
         ticking=false;
       });
     }, {passive:true});
-  })();
+  }
 
-  // timer demo
-  (function(){
-    const t = document.getElementById('demoTimer');
-    if(!t) return;
+  /* demo timer */
+  const t = document.getElementById('demoTimer');
+  if (t){
     let s = 50*60;
-    setInterval(()=>{ s=Math.max(0,--s);
-      t.textContent = String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
-    },1000);
-  })();
+    setInterval(()=>{ s=Math.max(0,--s); const m=String((s/60|0)).padStart(2,'0'); const ss=String(s%60).padStart(2,'0'); t.textContent=`${m}:${ss}`; },1000);
+  }
 
-  /* ===== Scrollytelling engine for the classroom frames =====
-     p = 0..1 as you scroll the scene.
-     Hold 1st frame fully until HOLD1, then crossfade to HOLD2, then show frame 2.
-     After STAT_START, reveal stats piece-by-piece.
-  */
+  /* ====== SCROLLY LOGIC (equal-duration holds + sequential facts) ====== */
   (function(){
-    const scene = document.getElementById('classroomScene');
-    const pin   = document.getElementById('pin');
-    const f1    = document.getElementById('f1');
-    const f2    = document.getElementById('f2');
-    const overlay = document.getElementById('statsOverlay');
-    const steps = [...document.querySelectorAll('[data-step]')];
-    const counters = [...document.querySelectorAll('.count')];
+    const scrolly = document.getElementById('scrolly');
+    const pin = document.getElementById('pin');
+    const f1 = document.getElementById('f1');    // attentive
+    const f2 = document.getElementById('f2');    // phones
+    const fog = document.getElementById('fog');
+    const fact1 = document.getElementById('fact1');
+    const fact2 = document.getElementById('fact2');
+    const fact3 = document.getElementById('fact3');
+    const bars  = document.getElementById('bars');
 
-    // tune these to match the "good scrolling" feel
-    const HOLD1 = 0.62;     // keep first image fully on screen until 62% of the scene
-    const HOLD2 = 0.78;     // crossfade ends by 78%
-    const STAT_START = 0.82;// stats begin appearing
-    let countersStarted = false;
-
-    function progress(){
-      const rect = scene.getBoundingClientRect();
-      const vh = innerHeight || document.documentElement.clientHeight;
-      const total = rect.height - vh;                   // scrollable distance while pinned
-      const passed = Math.min(Math.max(-rect.top, 0), total);
-      return total <= 0 ? 0 : passed / total;           // 0..1
-    }
-
+    function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
     function lerp(a,b,t){ return a + (b-a)*t; }
-    function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+    function seg(p,a,b){ return clamp((p-a)/(b-a),0,1); } // 0..1 within [a,b]
 
     function onScroll(){
-      const p = progress();
+      const vh = innerHeight || document.documentElement.clientHeight;
+      const rect = scrolly.getBoundingClientRect();
+      const total = scrolly.offsetHeight - vh; // scrollable inside scrolly
+      const p = clamp((0 - rect.top) / total, 0, 1); // 0..1 progress
 
-      // crossfade logic
-      if(p < HOLD1){
-        f1.style.opacity = 1;
-        f2.style.opacity = 0;
-      }else if(p > HOLD2){
-        f1.style.opacity = 0;
-        f2.style.opacity = 1;
-      }else{
-        const t = (p - HOLD1) / (HOLD2 - HOLD1); // 0..1
-        f1.style.opacity = (1 - t).toFixed(3);
-        f2.style.opacity = t.toFixed(3);
-      }
+      /* segment plan:
+         0.00–0.20  attentive hold
+         0.20–0.30  crossfade to phones
+         0.30–0.50  phones hold  (same length as attentive hold)
+         0.50–0.625 stat1
+         0.625–0.75 stat2
+         0.75–0.875 stat3
+         0.875–1.00 bars
+      */
 
-      // stats overlay visibility
-      const s = clamp01((p - STAT_START) / (1 - STAT_START)); // 0..1 after STAT_START
-      overlay.style.opacity = (s>0 ? lerp(0,1,s) : 0);
-      // dim frames a touch while stats are up
-      const dim = s>0 ? lerp(1, .65, s) : 1;
-      f1.style.filter = `opacity(${dim})`;
-      f2.style.filter = `opacity(${dim})`;
+      // attentive opacity
+      const aHold = (p<=0.20) ? 1 : (p>=0.30 ? 0 : 1 - seg(p,0.20,0.30));
+      // phones opacity
+      const bFade = (p<=0.20) ? 0 : (p<=0.30 ? seg(p,0.20,0.30) : 1);
+      const bDim  = (p<=0.50) ? 0 : seg(p,0.50,0.60); // slight dim as stats start
 
-      // stepwise reveals
-      // thresholds for 4 elements, staggered across s in [0..1]
-      const thresholds = [0.05, 0.25, 0.45, 0.65];
-      steps.forEach((el, i)=>{
-        if(s >= thresholds[i]) el.classList.add('in');
-        else el.classList.remove('in');
-      });
+      f1.style.opacity = aHold.toFixed(3);
+      f2.style.opacity = bFade.toFixed(3);
+      fog.style.background = `rgba(255,255,255,${lerp(0,0.25,bDim).toFixed(3)})`;
 
-      // animate counters once
-      if(!countersStarted && s > thresholds[0]){
-        countersStarted = true;
-        counters.forEach(el=>{
-          const end = Number(el.dataset.count||'0');
-          const duration = 1200;
-          const start = performance.now();
-          function tick(now){
-            const t = Math.min(1,(now-start)/duration);
-            el.textContent = Math.floor(end*(t*t*(3-2*t)));
-            if(t<1) requestAnimationFrame(tick);
-          }
-          requestAnimationFrame(tick);
-        });
-      }
+      // facts sequential reveal (each with same duration)
+      const s1 = seg(p,0.50,0.625), s2 = seg(p,0.625,0.75), s3 = seg(p,0.75,0.875), sb = seg(p,0.875,1.0);
+      function show(el, t){ el.style.opacity = t; el.style.transform = `translateY(${(1-t)*12}px)`; }
+      show(fact1, s1.toFixed(3));
+      show(fact2, s2.toFixed(3));
+      show(fact3, s3.toFixed(3));
+      show(bars,  sb.toFixed(3));
     }
-
+    onScroll();
     addEventListener('scroll', onScroll, {passive:true});
     addEventListener('resize', onScroll, {passive:true});
-    onScroll();
   })();
 </script>
 </body>
