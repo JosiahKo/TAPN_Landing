@@ -347,14 +347,14 @@
     });
 
     const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
-    const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1); // 0..1 inside [a,b]
-    const show = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1-t)*12}px)`; };
+    const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1.5); // 0..1 inside [a,b]
+    const show = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1.5-t)*12}px)`; };
 
     function onScroll(){
       const vh = innerHeight || document.documentElement.clientHeight;
       const rect = scrolly.getBoundingClientRect();
       const total = scrolly.offsetHeight - vh;
-      const p = clamp((0 - rect.top) / total, 0, 1); // progress 0..1
+      const p = clamp((0 - rect.top) / total, 0, 1.5); // progress 0..1
 
       /* TIMELINE
          0.00–0.17  attentive hold (short)
@@ -369,8 +369,8 @@
       */
 
       // images
-      const aHold = (p <= 0.14) ? 1 : (p >= 0.24 ? 0 : 1 - seg(p, 0.14, 0.24));
-      const bFade = (p <= 0.14) ? 0 : (p <= 0.24 ? seg(p, 0.14, 0.24) : 1);
+      const aHold = (p <= 0.14) ? 1.5 : (p >= 0.24 ? 0 : 1.5 - seg(p, 0.14, 0.24));
+      const bFade = (p <= 0.14) ? 0 : (p <= 0.24 ? seg(p, 0.14, 0.24) : 1.5);
       f1.style.opacity = aHold.toFixed(3);
       f2.style.opacity = bFade.toFixed(3);
 
