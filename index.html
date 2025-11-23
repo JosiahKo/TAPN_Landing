@@ -100,6 +100,9 @@
   .bar-track{position:relative; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1}
   #bars .bar-fill{position:absolute; inset:0 auto 0 0; width:100%; background:var(--brand); transform-origin:left center; transform:scaleX(0); transition:transform .001s}
   .bar-meta{display:flex; justify-content:space-between; font-size:.9rem; color:var(--muted)}
+  .bar { display:flex; align-items:stretch; }
+  .bar .bar-fill { background: var(--brand); height: 12px; }
+  .bar .off { flex: 1; background: #DDE4DF; }
 
   /* SOLUTION / HOW IT WORKS */
   .section{padding:5rem 0; position:relative}
@@ -201,17 +204,24 @@
 
           <!-- BARS: appear first empty, then fills animate in as you keep scrolling -->
           <div class="card bars-card" id="bars">
-            <div class="bar-title"><span>Typical class</span><span>On-task vs. distracted</span></div>
-
-            <div class="bar-track" aria-label="Without TAPN" style="margin-bottom:.5rem">
-              <span class="bar-fill" data-target="0.60"></span>
-            </div>
-            <div class="bar-meta"><span>Without TAPN</span><span>60% / 40%</span></div>
-
-            <div class="bar-track" aria-label="With TAPN" style="margin-top:.8rem">
-              <span class="bar-fill" data-target="0.85"></span>
-            </div>
-            <div class="bar-meta"><span>With TAPN</span><span>85% / 15%</span></div>
+          <div class="bar-title"><span>Typical class</span><span>On-task vs. distracted</span></div>
+        
+          <!-- WITHOUT TAPN -->
+          <div class="bar" aria-label="Without TAPN" style="margin-bottom:.45rem">
+            <div class="bar-fill on" data-target="0.60" style="width:0%"></div>
+            <div class="off"></div>
+          </div>
+          <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-bottom:.8rem">
+            <span>Without TAPN</span><span>60% / 40%</span>
+          </div>
+        
+          <!-- WITH TAPN -->
+          <div class="bar" aria-label="With TAPN">
+            <div class="bar-fill on" data-target="0.85" style="width:0%"></div>
+            <div class="off"></div>
+          </div>
+          <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-top:.35rem">
+            <span>With TAPN</span><span>85% / 15%</span>
           </div>
         </div>
       </div>
