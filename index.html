@@ -350,11 +350,23 @@
     const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1.5); // 0..1 inside [a,b]
     const show = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1.5-t)*12}px)`; };
 
+    const TL = {
+      attEnd: 0.14,      // attentive hold ends (was 0.17)
+      xfadeEnd: 0.24,    // crossfade ends (was 0.27)
+      phonesEnd: 0.34,   // phones hold ends / stats start (was 0.44)
+    
+      fact1End: 0.34,    // keep relative spacing the same or tweak
+      fact2End: 0.44,
+      fact3End: 0.54,
+      barsAppearEnd: 0.66,
+      barsFillEnd: 0.88
+    };
+
     function onScroll(){
       const vh = innerHeight || document.documentElement.clientHeight;
       const rect = scrolly.getBoundingClientRect();
       const total = scrolly.offsetHeight - vh;
-      const p = clamp((0 - rect.top) / total, 0, 1.5); // progress 0..1
+      const p = clamp((0 - rect.top) / total, 0, 1); // progress 0..1
 
       /* TIMELINE
          0.00–0.17  attentive hold (short)
@@ -368,34 +380,18 @@
          0.96–1.00  Final HOLD on bars
       */
 
-      // images
-      const aHold = (p <= 0.14) ? 1.5 : (p >= 0.24 ? 0 : 1.5 - seg(p, 0.14, 0.24));
-      const bFade = (p <= 0.14) ? 0 : (p <= 0.24 ? seg(p, 0.14, 0.24) : 1.5);
-      f1.style.opacity = aHold.toFixed(3);
-      f2.style.opacity = bFade.toFixed(3);
-
-      // dim background once stats begin
-      const dim = (p <= 0.38) ? 0 : seg(p, 0.38, 0.48);
-      fog.style.background = `rgba(255,255,255,${(0.25*dim).toFixed(3)})`;
-
-      // stats sequence
-      show(fact1, seg(p, 0.38, 0.56));
-      show(fact2, seg(p, 0.56, 0.74));
-      show(fact3, seg(p, 0.74, 0.92));
-
-      // bars appear (empty), then fill, then hold
-      const barsAppear = seg(p, 0.92, 1);
+      const aHold = (p <= TL.attEnd) ? 1 : (p >= TL.xfadeEnd ? 0 : 1 - seg(p, TL.attEnd, TL.xfadeEnd));
+      const bFade = (p <= TL.attEnd) ? 0 : (p <= TL.xfadeEnd ? seg(p, TL.attEnd, TL.xfadeEnd) : 1);
+      
+      const dim = (p <= TL.phonesEnd) ? 0 : seg(p, TL.phonesEnd, TL.phonesEnd + 0.10);
+      show(fact1, seg(p, TL.phonesEnd, TL.fact1End));
+      show(fact2, seg(p, TL.fact1End, TL.fact2End));
+      show(fact3, seg(p, TL.fact2End, TL.fact3End));
+      const barsAppear = seg(p, TL.fact3End, TL.barsAppearEnd);
       show(bars, barsAppear);
-      if (p >= 1) show(bars, 1.5);
+      if (p >= TL.barsAppearEnd) show(bars, 1);
+      const fillT = seg(p, TL.barsAppearEnd, TL.barsFillEnd);
 
-      const fillT = seg(p, 0.92, 1);
-      if (p < 0.92) {
-        fills.forEach(el => el.style.transform = 'scaleX(0)');
-      } else {
-        fills.forEach((el,i)=>{
-          el.style.transform = `scaleX(${(targets[i]*fillT).toFixed(4)})`;
-        });
-      }
     }
 
     onScroll();
