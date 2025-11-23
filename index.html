@@ -22,7 +22,7 @@
     --brand:#29B087;  --ring:rgba(41,176,135,.26);
     --radius:14px;
 
-    /* Problem section sketch opacity (JS updates this 1 → .35) */
+    /* Sketch opacity during overlay */
     --sketch-opacity: 1;
   }
 
@@ -35,7 +35,7 @@
     color: var(--ink);
     background-color: var(--bg);
 
-    /* soft radial wash (the grain sits on ::before) */
+    /* soft radial wash (grain sits on ::before) */
     background-image:
       radial-gradient(1200px 520px at 10% -12%, color-mix(in srgb, var(--brand) 6%, transparent), transparent 55%),
       radial-gradient(1200px 520px at 95% -18%, color-mix(in srgb, var(--bg2) 35%, transparent), transparent 60%);
@@ -152,23 +152,42 @@
   .lightbox-close{ position:absolute; top:-42px; right:0; border:1px solid var(--line);
     background:#fff; color:var(--ink); border-radius:10px; padding:.4rem .6rem; cursor:pointer; }
 
-  /* ---------- Problem section SKETCH-as-BACKGROUND ---------- */
+  /* ---------- SCROLLY (pinned) PROBLEM section ---------- */
   #problem{
-    /* create a stacking context so our background sits under content but above body::before */
-    isolation:isolate;
-    min-height: 120vh; /* give room for the entrance before stats overlay */
+    --overlayProgress: 0; /* 0..1 */
+    position: relative;
+    padding: 0; /* scrolly takes over spacing */
   }
-  .sketch-bg{
+  .scrolly{
+    height: 220vh; /* total scroll length over this section */
+    position: relative;
+  }
+  .pin-wrap{
+    position: sticky; top: 0; height: 100vh; overflow: clip;
+    isolation: isolate;
+    background: transparent;
+  }
+  .sketch-stage{
     position:absolute; inset:0; z-index:0; pointer-events:none;
-    opacity: var(--sketch-opacity); transition: opacity .3s ease;
+    opacity: var(--sketch-opacity);
+    transition: opacity .3s ease;
   }
-  /* This container sits above the sketch bg */
-  #problem .narrow, #problem .container{ position:relative; z-index:1; }
-  /* The intro spacer lets the sketch show briefly before stats overlay */
-  .sketch-intro{ height: 42vh; }
-  /* As we fade in the stats, we also slightly blur the sketch for depth */
-  #problem[data-fading="1"] .sketch-bg{ filter: blur(.4px); }
-  #problem[data-fading="2"] .sketch-bg{ filter: blur(.8px); }
+  .stats-overlay{
+    position:absolute; inset:0; z-index:1; display:grid; place-items:center;
+    pointer-events:none;
+    opacity: 0; transform: translateY(12px);
+  }
+  .stats-overlay .inner{
+    width:min(880px, 92vw);
+  }
+
+  /* Transparent scrim that subtly lifts text during overlay */
+  .scrim{
+    position:absolute; inset:0; z-index:0;
+    background: radial-gradient(1600px 700px at 50% 70%, rgba(255,255,255,.65), rgba(255,255,255,.25) 60%, transparent 80%);
+    opacity:0;
+    transition: opacity .4s ease;
+  }
 
   /* Mobile */
   @media (max-width: 900px){
@@ -183,13 +202,8 @@
     .js [data-reveal]{ opacity:1 !important; transform:none !important; filter:none !important; }
   }
 </style>
-
-<!-- RoughJS for hand-drawn classroom -->
-<script src="https://unpkg.com/roughjs@4.5.1/bundled/rough.js"></script>
 </head>
 <body>
-
-<!-- NAV -->
 <header class="nav">
   <div class="container nav-inner">
     <a href="#top" class="brand"><span class="logo" aria-hidden="true"></span><span>TAPN</span></a>
@@ -203,7 +217,6 @@
   </div>
 </header>
 
-<!-- HERO -->
 <main id="top" class="hero" data-theme="tone1">
   <div class="narrow">
     <span class="kicker" data-reveal>Tap-to-focus</span>
@@ -238,55 +251,163 @@
 
 <div class="hairline"></div>
 
-<!-- PROBLEM (sketch is the background) -->
+<!-- PROBLEM: PINNED, HAND-DRAWN SVG + DELAYED OVERLAY -->
 <section id="problem" class="section" data-theme="tone2">
-  <!-- background canvases -->
-  <canvas id="sketchStatic" class="sketch-bg" aria-hidden="true"></canvas>
-  <canvas id="sketchPhones" class="sketch-bg" aria-hidden="true"></canvas>
+  <div class="scrolly" id="scrolly">
+    <div class="pin-wrap" id="pinWrap">
+      <!-- sketch background -->
+      <svg id="classroom" class="sketch-stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <!-- Hand-drawn jitter filter -->
+          <filter id="wiggle" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <filter id="soften" x="-5%" y="-5%" width="110%" height="110%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.3"/>
+          </filter>
+          <style>
+            .s-line{ fill:none; stroke:#12201a; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; filter:url(#wiggle); }
+            .s-hair{ fill:#0000; stroke:#12201a; stroke-width:1.8; filter:url(#wiggle); }
+            .s-fill{ fill:#f7f8f4; stroke:#12201a; stroke-width:2.1; stroke-linecap:round; stroke-linejoin:round; filter:url(#wiggle); }
+            .s-faint{ stroke:#12201a; stroke-opacity:.18; }
+            .s-board{ fill:#ffffff; fill-opacity:.65; stroke:#12201a; stroke-width:2; filter:url(#wiggle); }
+            .phone-shape{ fill:#dfe6e2; stroke:#12201a; stroke-width:1.6; rx:4; ry:4; filter:url(#wiggle); }
+          </style>
+        </defs>
 
-  <div class="narrow">
-    <div class="sketch-intro" aria-hidden="true"></div>
+        <!-- room frame -->
+        <rect x="18" y="18" width="1564" height="864" class="s-fill" />
 
-    <h2 data-reveal>The issue</h2>
-    <p class="muted" data-reveal>Phones are crushing classroom focus. Here’s the scale — short and sharp.</p>
+        <!-- floor perspective guide lines -->
+        <g class="s-faint" filter="url(#soften)">
+          <path class="s-line" d="M120 520 L1480 520"/>
+          <path class="s-line" d="M160 600 L1440 600"/>
+          <path class="s-line" d="M200 680 L1400 680"/>
+          <path class="s-line" d="M240 760 L1360 760"/>
+        </g>
 
-    <div id="statsBlock" class="stats" data-reveal>
-      <div class="stat">
-        <div class="kpi"><span class="count" data-count="42">0</span>%</div>
-        <p>of class time risks going off-task on devices.</p>
-      </div>
-      <div class="stat">
-        <div class="kpi">−<span class="count" data-count="15">0</span> min</div>
-        <p>lost per 50-minute class to phone distractions.</p>
-      </div>
-      <div class="stat">
-        <div class="kpi"><span class="count" data-count="78">0</span>%</div>
-        <p>teachers say phones directly reduce learning quality.</p>
-      </div>
-    </div>
+        <!-- whiteboard at front-right -->
+        <rect x="1080" y="100" width="360" height="160" class="s-board"/>
+        <path d="M1080 180 L1440 180" class="s-line" style="opacity:.35"/>
 
-    <div class="card" style="margin-top:1rem;" data-reveal>
-      <div class="bar-label"><span>Typical class</span><span>On-task vs. distracted</span></div>
-      <div class="bars">
-        <div class="bar" aria-label="Without TAPN">
-          <div class="seg-on" style="width:60%"></div>
-          <div class="seg-off" style="width:40%"></div>
+        <!-- teacher silhouette (front right) -->
+        <g>
+          <circle cx="1390" cy="280" r="20" class="s-line"/>
+          <path d="M1376 300 Q1392 308 1406 300 L1406 360 Q1392 370 1376 360 Z" class="s-line" fill="none"/>
+          <path d="M1391 330 L1391 400" class="s-line"/>
+          <path d="M1391 400 Q1374 430 1360 460" class="s-line"/>
+          <path d="M1391 400 Q1408 430 1422 460" class="s-line"/>
+          <path d="M1384 292 Q1370 288 1358 280" class="s-line"/>
+          <path d="M1396 292 Q1410 288 1422 280" class="s-line"/>
+        </g>
+
+        <!-- desks + students (two rows, perspective from back) -->
+        <g id="rowBack">
+          <!-- four desks across, narrower toward front -->
+          <!-- desk 1 -->
+          <path d="M240 480 L420 480 L440 540 L220 540 Z" class="s-line"/>
+          <!-- student head/shoulders -->
+          <path d="M280 460 q20 -18 40 0" class="s-hair"/>
+          <path d="M270 468 q24 12 60 0 q-6 14 -24 20 q-22 -4 -36 -20" class="s-line" fill="none"/>
+          <!-- phone -->
+          <rect x="380" y="510" width="26" height="36" class="phone-shape" />
+
+          <!-- desk 2 -->
+          <path d="M520 480 L700 480 L720 540 L500 540 Z" class="s-line"/>
+          <path d="M560 460 q20 -18 40 0" class="s-hair"/>
+          <path d="M550 468 q24 12 60 0 q-6 14 -24 20 q-22 -4 -36 -20" class="s-line" fill="none"/>
+          <rect x="660" y="510" width="26" height="36" class="phone-shape" />
+
+          <!-- desk 3 -->
+          <path d="M800 480 L980 480 L1000 540 L780 540 Z" class="s-line"/>
+          <path d="M840 460 q20 -18 40 0" class="s-hair"/>
+          <path d="M830 468 q24 12 60 0 q-6 14 -24 20 q-22 -4 -36 -20" class="s-line" fill="none"/>
+          <rect x="940" y="510" width="26" height="36" class="phone-shape" />
+
+          <!-- desk 4 -->
+          <path d="M1080 480 L1260 480 L1280 540 L1060 540 Z" class="s-line"/>
+          <path d="M1120 460 q20 -18 40 0" class="s-hair"/>
+          <path d="M1110 468 q24 12 60 0 q-6 14 -24 20 q-22 -4 -36 -20" class="s-line" fill="none"/>
+          <rect x="1220" y="510" width="26" height="36" class="phone-shape" />
+        </g>
+
+        <g id="rowFront">
+          <!-- larger (closer to viewer) -->
+          <!-- desk 1 -->
+          <path d="M200 620 L430 620 L455 700 L175 700 Z" class="s-line"/>
+          <path d="M250 594 q24 -22 52 0" class="s-hair"/>
+          <path d="M236 604 q32 16 76 0 q-8 18 -28 26 q-28 -6 -48 -26" class="s-line" fill="none"/>
+          <rect x="390" y="660" width="30" height="44" class="phone-shape" />
+
+          <!-- desk 2 -->
+          <path d="M520 620 L750 620 L775 700 L495 700 Z" class="s-line"/>
+          <path d="M570 594 q24 -22 52 0" class="s-hair"/>
+          <path d="M556 604 q32 16 76 0 q-8 18 -28 26 q-28 -6 -48 -26" class="s-line" fill="none"/>
+          <rect x="710" y="660" width="30" height="44" class="phone-shape" />
+
+          <!-- desk 3 -->
+          <path d="M840 620 L1070 620 L1095 700 L815 700 Z" class="s-line"/>
+          <path d="M890 594 q24 -22 52 0" class="s-hair"/>
+          <path d="M876 604 q32 16 76 0 q-8 18 -28 26 q-28 -6 -48 -26" class="s-line" fill="none"/>
+          <rect x="1030" y="660" width="30" height="44" class="phone-shape" />
+
+          <!-- desk 4 -->
+          <path d="M1160 620 L1390 620 L1415 700 L1135 700 Z" class="s-line"/>
+          <path d="M1210 594 q24 -22 52 0" class="s-hair"/>
+          <path d="M1196 604 q32 16 76 0 q-8 18 -28 26 q-28 -6 -48 -26" class="s-line" fill="none"/>
+          <rect x="1350" y="660" width="30" height="44" class="phone-shape" />
+        </g>
+      </svg>
+
+      <!-- soft scrim for overlay phase -->
+      <div class="scrim" id="scrim"></div>
+
+      <!-- overlay stats that appear after you’ve fully viewed the sketch -->
+      <div class="stats-overlay" id="statsOverlay" aria-hidden="true">
+        <div class="inner">
+          <h2 data-reveal>The issue</h2>
+          <p class="muted" data-reveal>Phones are crushing classroom focus. Here’s the scale — short and sharp.</p>
+
+          <div id="statsBlock" class="stats" data-reveal>
+            <div class="stat">
+              <div class="kpi"><span class="count" data-count="42">0</span>%</div>
+              <p>of class time risks going off-task on devices.</p>
+            </div>
+            <div class="stat">
+              <div class="kpi">−<span class="count" data-count="15">0</span> min</div>
+              <p>lost per 50-minute class to phone distractions.</p>
+            </div>
+            <div class="stat">
+              <div class="kpi"><span class="count" data-count="78">0</span>%</div>
+              <p>teachers say phones directly reduce learning quality.</p>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:1rem;" data-reveal>
+            <div class="bar-label"><span>Typical class</span><span>On-task vs. distracted</span></div>
+            <div class="bars">
+              <div class="bar" aria-label="Without TAPN">
+                <div class="seg-on" style="width:60%"></div>
+                <div class="seg-off" style="width:40%"></div>
+              </div>
+              <div class="bar-label"><span>Without TAPN</span><span>60% / 40%</span></div>
+
+              <div class="bar" aria-label="With TAPN">
+                <div class="seg-on" style="width:85%"></div>
+                <div class="seg-off" style="width:15%"></div>
+              </div>
+              <div class="bar-label"><span>With TAPN</span><span>85% / 15%</span></div>
+            </div>
+          </div>
         </div>
-        <div class="bar-label"><span>Without TAPN</span><span>60% / 40%</span></div>
-
-        <div class="bar" aria-label="With TAPN">
-          <div class="seg-on" style="width:85%"></div>
-          <div class="seg-off" style="width:15%"></div>
-        </div>
-        <div class="bar-label"><span>With TAPN</span><span>85% / 15%</span></div>
-      </div>
-    </div>
-  </div>
+      </div> <!-- /stats-overlay -->
+    </div> <!-- /pin-wrap -->
+  </div> <!-- /scrolly -->
 </section>
 
 <div class="hairline"></div>
 
-<!-- SOLUTION -->
 <section id="solution" class="section narrow" data-theme="tone3">
   <h2 data-reveal>Our solution</h2>
   <p class="muted" data-reveal>One tap at the door turns on Class Mode: essentials stay, distractions go, attendance logs itself.</p>
@@ -318,7 +439,6 @@
 
 <div class="hairline"></div>
 
-<!-- GALLERY -->
 <section id="demo" class="section narrow" data-theme="tone4">
   <h2 data-reveal>See it working</h2>
   <p class="muted" data-reveal>Real snapshots from our MVP and the TAPN wooden block prototype.</p>
@@ -358,7 +478,6 @@
 
 <div class="hairline"></div>
 
-<!-- HOW IT WORKS -->
 <section id="how" class="section narrow" data-theme="tone5">
   <h2 data-reveal>How it works</h2>
   <div class="steps">
@@ -379,7 +498,6 @@
 
 <div class="hairline"></div>
 
-<!-- FAQ -->
 <section id="faq" class="section narrow" data-theme="tone4">
   <h2 data-reveal>FAQ</h2>
   <details data-reveal>
@@ -398,7 +516,6 @@
 
 <div class="hairline"></div>
 
-<!-- WAITLIST -->
 <section id="waitlist" class="section narrow" data-theme="tone3">
   <h2 data-reveal>Join the pilot</h2>
   <p class="muted" data-reveal>Tell us about your school. We’ll reach out within 2 business days.</p>
@@ -430,7 +547,6 @@
 
 <div class="hairline"></div>
 
-<!-- FOOTER -->
 <footer class="section">
   <div class="narrow" style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
     <div style="display:flex; align-items:center; gap:.6rem;">
@@ -453,7 +569,7 @@
 <script>
   document.documentElement.classList.add('js');
 
-  /* ---------- Reveal on scroll ---------- */
+  /* Reveal on scroll */
   const revealer = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries => {
         entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); revealer.unobserve(e.target);} });
@@ -520,7 +636,7 @@
   lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLb(); });
   window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !lb.hidden) closeLb(); });
 
-  /* ------- Subtle shade shifts on scroll (background tones) ------- */
+  /* Subtle background tone shifts */
   const THEMES = {
     tone1:{ bg:'#F7F8F4', bg2:'#EEF2EE', panel:'#FFFFFF', line:'#E5EAE5' },
     tone2:{ bg:'#F5F7F3', bg2:'#ECF1ED', panel:'#FFFFFF', line:'#E3E9E4' },
@@ -548,181 +664,74 @@
     : null;
   sections.forEach(s => themeObs?.observe(s));
 
-  /* ===== Hand-drawn classroom SKETCH as BACKGROUND ===== */
+  /* ===== Scrollytelling: pin, then overlay stats ===== */
   (function(){
-    const section = document.getElementById('problem');
-    const statCV  = document.getElementById('sketchStatic');
-    const phoneCV = document.getElementById('sketchPhones');
-    const solution= document.getElementById('solution');
-    if(!section || !statCV || !phoneCV) return;
+    const scrolly  = document.getElementById('scrolly');
+    const pinWrap  = document.getElementById('pinWrap');
+    const overlay  = document.getElementById('statsOverlay');
+    const scrim    = document.getElementById('scrim');
+    const svg      = document.getElementById('classroom');
+    const phones   = [...svg.querySelectorAll('.phone-shape')];
 
-    const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-    const brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim() || '#29B087';
+    // Assign each phone a deterministic hue so colors feel human, not rainbowy
+    phones.forEach((el, i)=>{
+      const hue = (23*i + 110) % 360;
+      el.dataset.hue = hue;
+    });
 
-    function fitCanvas(c){
-      const r = section.getBoundingClientRect();
-      c.width  = Math.floor(r.width * DPR);
-      c.height = Math.floor(r.height * DPR);
-      c.style.width  = r.width + 'px';
-      c.style.height = r.height + 'px';
-      const ctx = c.getContext('2d');
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    let last = -1, ticking = false;
+
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    function smoothstep(e0, e1, x){
+      const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+      return t*t*(3-2*t);
     }
 
-    let phoneRects = [];
-    function drawStatic(){
-      fitCanvas(statCV); fitCanvas(phoneCV);
-      const rc = rough.canvas(statCV);
-      const ctx = statCV.getContext('2d');
-      ctx.clearRect(0,0,statCV.width, statCV.height);
-
-      const r = section.getBoundingClientRect();
-      const W = r.width, H = r.height;
-
-      const opts = { roughness: 1.5, bowing: 1.2, stroke: 'rgba(15,27,23,.75)', strokeWidth: 2 };
-
-      // room border (soft hand line)
-      rc.rectangle(10, 10, W-20, H-20, {...opts, roughness:1});
-
-      // whiteboard (front-right)
-      rc.rectangle(W*0.60, H*0.10, W*0.30, H*0.18, {...opts, roughness:1.1});
-      rc.line(W*0.60, H*0.19, W*0.90, H*0.19, {...opts, stroke:'rgba(15,27,23,.38)'});
-
-      // teacher (silhouette)
-      rc.circle(W*0.84, H*0.28, 36, {...opts});
-      rc.rectangle(W*0.82, H*0.32, 44, 70, {...opts, fill:'rgba(15,27,23,.06)', fillStyle:'hachure'});
-      rc.line(W*0.84, H*0.40, W*0.84, H*0.55, opts);
-      rc.line(W*0.84, H*0.55, W*0.80, H*0.68, opts);
-      rc.line(W*0.84, H*0.55, W*0.88, H*0.68, opts);
-      rc.line(W*0.83, H*0.36, W*0.79, H*0.33, opts);
-      rc.line(W*0.85, H*0.36, W*0.89, H*0.33, opts);
-
-      // rows of desks (perspective), students + small phone rectangles
-      phoneRects = [];
-      function row(y, scale, x0, x1, count){
-        for(let i=0;i<count;i++){
-          const t = i/(count-1);
-          const cx = x0 + (x1-x0)*t;
-          const w = 150*scale, h = 72*scale;
-          const x = cx - w/2;
-
-          rc.rectangle(x, y, w, h, {...opts, seed: 101+i+Math.round(y)});
-          // head + torso
-          rc.ellipse(x + w*0.18, y - 20*scale, 28*scale, 24*scale, {...opts, seed: 301+i});
-          rc.rectangle(x + w*0.12, y - 6*scale, 36*scale, 26*scale, {...opts, seed: 401+i});
-
-          // phone near right-top of desk
-          const pw = 20*scale, ph = 30*scale;
-          const px = x + w*0.68, py = y + h*0.22;
-          phoneRects.push({x:px, y:py, w:pw, h:ph, seed: 600+i+Math.round(y)});
-        }
-      }
-      row(H*0.48, 0.86, W*0.18, W*0.88, 4);  // back row
-      row(H*0.66, 1.00, W*0.14, W*0.84, 4);  // front row
-
-      // floor guides (very light)
-      for(let i=0;i<6;i++){
-        const yy = H*0.42 + i*H*0.09;
-        rc.line(W*0.10, yy, W*0.92, yy, {...opts, stroke:'rgba(15,27,23,.18)', strokeWidth:1.1, roughness:1});
-      }
-    }
-
-    function drawPhones(progress){
-      const rc = rough.canvas(phoneCV);
-      const ctx = phoneCV.getContext('2d');
-      ctx.clearRect(0,0,phoneCV.width, phoneCV.height);
-
-      const solutionActive = document.body.classList.contains('solution-active');
-
-      phoneRects.forEach((p, i)=>{
-        let fill;
-        if(solutionActive){
-          fill = brand; // calm green in solution
-        }else{
-          const t = Math.max(0, Math.min(1, progress));
-          if(t < 0.02){ fill = '#DDE4DF'; }
-          else{
-            const hue = (i*47 + t*260) % 360;
-            const sat = Math.round(15 + t*77);
-            const lit = Math.round(78 - t*22);
-            fill = `hsl(${hue} ${sat}% ${lit}%)`;
-          }
-        }
-        rc.rectangle(p.x, p.y, p.w, p.h, {
-          stroke: 'rgba(15,27,23,.65)',
-          strokeWidth: 1.5,
-          roughness: 1.1,
-          bowing: 1.3,
-          fill,
-          fillStyle: 'hachure',
-          fillWeight: 1.1,
-          hachureGap: 6,
-          seed: p.seed
-        });
-      });
-    }
-
-    function layout(){
-      drawStatic();
-      drawPhones(0);
-    }
-    layout();
-    window.addEventListener('resize', layout, {passive:true});
-
-    /* Fade logic: as you scroll through #problem, stats fade in and sketch opacity eases 1 → .35 */
-    const stats = document.getElementById('statsBlock');
-    let ticking=false, last = -1;
     function onScroll(){
-      if(ticking) return; ticking=true;
+      if(ticking) return; ticking = true;
       requestAnimationFrame(()=>{
-        const rect = section.getBoundingClientRect();
-        const vh = innerHeight || document.documentElement.clientHeight;
+        const rect = scrolly.getBoundingClientRect();
+        const vh   = innerHeight || document.documentElement.clientHeight;
 
-        // progress: when section top enters (vh*0.9) until past middle
-        const start = Math.min(vh*0.9, vh);
-        const end   = Math.max(vh*0.25, 240);
-        const pRaw  = (start - rect.top) / (start + end);
-        const p     = Math.max(0, Math.min(1, pRaw));
+        // progress across the scrolly container while pinned
+        const total = rect.height - vh; // scrollable distance while pinned
+        const p     = Math.min(1, Math.max(0, (0 - rect.top) / (total || 1)));
 
-        // fade background sketch opacity from 1 → .35
-        const alpha = (1 - 0.65*p).toFixed(3);
-        document.documentElement.style.setProperty('--sketch-opacity', alpha);
+        // Phase A (0 → ~0.55): keep full sketch; animate phones slightly (distraction)
+        // Phase B (~0.55 → 1): fade sketch to 0.4, bring in overlay and scrim
+        const fadeStart = 0.55;
+        const overlayStart = 0.62;
 
-        // hint blur stage classes for depth (optional)
-        section.dataset.fading = p>0.66 ? '2' : (p>0.33 ? '1' : '0');
+        // sketch opacity
+        const fadeK = (p <= fadeStart) ? 1 : lerp(1, 0.4, smoothstep(fadeStart, 0.92, p));
+        document.documentElement.style.setProperty('--sketch-opacity', fadeK.toFixed(3));
 
-        // reveal stats gradually (0 → 1 between p=.2 and .7)
-        const s = Math.max(0, Math.min(1, (p - 0.2) / 0.5));
-        stats.style.opacity = s.toFixed(3);
-        stats.style.transform = `translateY(${(1-s)*12}px)`;
+        // phone fills
+        phones.forEach((el, i)=>{
+          const baseHue = +el.dataset.hue;
+          // subtle “flicker” of distraction colors during Phase A
+          const t = Math.min(1, Math.max(0, p / fadeStart));
+          const sat = Math.round(15 + t*55);
+          const lit = Math.round(85 - t*20);
+          el.style.fill = `hsl(${baseHue} ${sat}% ${lit}%)`;
+        });
 
-        // animate phone screen colors tied to p
-        if (Math.abs(p - last) > 0.015) { drawPhones(p); last=p; }
-        ticking=false;
+        // overlay opacity & scrim
+        const o = (p <= overlayStart) ? 0 : smoothstep(overlayStart, 0.98, p);
+        overlay.style.opacity = o.toFixed(3);
+        overlay.style.transform = `translateY(${(1-o)*12}px)`;
+        scrim.style.opacity = (o*0.9).toFixed(3);
+
+        last = p; ticking = false;
       });
     }
-    stats.style.opacity = 0; stats.style.transform = 'translateY(12px)';
-    window.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
 
-    // Flip phone colors to calm green while Solution is visible
-    if('IntersectionObserver' in window){
-      const solObs = new IntersectionObserver(es=>{
-        es.forEach(e=>{
-          if(e.isIntersecting){
-            document.body.classList.add('solution-active');
-            drawPhones(1);
-          }else{
-            document.body.classList.remove('solution-active');
-            onScroll();
-          }
-        });
-      }, {threshold:.45});
-      solObs.observe(solution);
-    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll, {passive:true});
+    onScroll();
   })();
 
-  /* Animated counters */
+  /* Animated counters (fire when visible) */
   const counters = document.querySelectorAll('.count');
   const cObs = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries=>{
