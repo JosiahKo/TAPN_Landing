@@ -326,10 +326,9 @@
     setInterval(()=>{ s=Math.max(0,--s); const m=String((s/60|0)).padStart(2,'0'); const ss=String(s%60).padStart(2,'0'); t.textContent=`${m}:${ss}`; },1000);
   }
 
-  /* ====== SCROLLY LOGIC (equal-duration holds + sequential facts) ====== */
+  /* ====== SCROLLY LOGIC (shorter image holds + longer bars hold) ====== */
   (function(){
     const scrolly = document.getElementById('scrolly');
-    const pin = document.getElementById('pin');
     const f1 = document.getElementById('f1');    // attentive
     const f2 = document.getElementById('f2');    // phones
     const fog = document.getElementById('fog');
@@ -338,48 +337,48 @@
     const fact3 = document.getElementById('fact3');
     const bars  = document.getElementById('bars');
 
-    function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
-    function lerp(a,b,t){ return a + (b-a)*t; }
-    function seg(p,a,b){ return clamp((p-a)/(b-a),0,1); } // 0..1 within [a,b]
+    const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
+    const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1); // 0..1 inside [a,b]
 
     function onScroll(){
       const vh = innerHeight || document.documentElement.clientHeight;
       const rect = scrolly.getBoundingClientRect();
-      const total = scrolly.offsetHeight - vh; // scrollable inside scrolly
-      const p = clamp((0 - rect.top) / total, 0, 1); // 0..1 progress
+      const total = scrolly.offsetHeight - vh;
+      const p = clamp((0 - rect.top) / total, 0, 1); // progress 0..1
 
-      /* segment plan:
-         0.00–0.20  attentive hold
-         0.20–0.30  crossfade to phones
-         0.30–0.50  phones hold  (same length as attentive hold)
-         0.50–0.625 stat1
-         0.625–0.75 stat2
-         0.75–0.875 stat3
-         0.875–1.00 bars
+      /* New segment plan (slight tweaks):
+         0.00–0.17  attentive hold   (shorter)
+         0.17–0.27  crossfade
+         0.27–0.44  phones hold      (shorter, same as attentive)
+         0.44–0.56  stat1 (42%)
+         0.56–0.68  stat2 (–15 min)
+         0.68–0.80  stat3 (78%)
+         0.80–0.92  bars reveal
+         0.92–1.00  bars HOLD (new, longer)
       */
 
-      // attentive opacity
-      const aHold = (p<=0.20) ? 1 : (p>=0.30 ? 0 : 1 - seg(p,0.20,0.30));
-      // phones opacity
-      const bFade = (p<=0.20) ? 0 : (p<=0.30 ? seg(p,0.20,0.30) : 1);
-      const bDim  = (p<=0.50) ? 0 : seg(p,0.50,0.60); // slight dim as stats start
-
+      // image opacities
+      const aHold = (p <= 0.17) ? 1 : (p >= 0.27 ? 0 : 1 - seg(p, 0.17, 0.27));
+      const bFade = (p <= 0.17) ? 0 : (p <= 0.27 ? seg(p, 0.17, 0.27) : 1);
       f1.style.opacity = aHold.toFixed(3);
       f2.style.opacity = bFade.toFixed(3);
-      fog.style.background = `rgba(255,255,255,${lerp(0,0.25,bDim).toFixed(3)})`;
 
-      // facts sequential reveal (each with same duration)
-      const s1 = seg(p,0.50,0.625), s2 = seg(p,0.625,0.75), s3 = seg(p,0.75,0.875), sb = seg(p,0.875,1.0);
-      function show(el, t){ el.style.opacity = t; el.style.transform = `translateY(${(1-t)*12}px)`; }
-      show(fact1, s1.toFixed(3));
-      show(fact2, s2.toFixed(3));
-      show(fact3, s3.toFixed(3));
-      show(bars,  sb.toFixed(3));
+      // slight dim once stats begin
+      const dim = (p <= 0.44) ? 0 : seg(p, 0.44, 0.54);
+      fog.style.background = `rgba(255,255,255,${(0.25*dim).toFixed(3)})`;
+
+      // sequential stats (equal duration)
+      const show = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1-t)*12}px)`; };
+      show(fact1, seg(p, 0.44, 0.56));
+      show(fact2, seg(p, 0.56, 0.68));
+      show(fact3, seg(p, 0.68, 0.80));
+      show(bars,  seg(p, 0.80, 0.92)); // then it holds 0.92→1.00
     }
     onScroll();
     addEventListener('scroll', onScroll, {passive:true});
     addEventListener('resize', onScroll, {passive:true});
   })();
+
 </script>
 </body>
 </html>
