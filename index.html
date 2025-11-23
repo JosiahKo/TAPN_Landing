@@ -332,76 +332,77 @@
     const f1 = document.getElementById('f1');    // attentive
     const f2 = document.getElementById('f2');    // phones
     const fog = document.getElementById('fog');
-
+  
     const fact1 = document.getElementById('fact1');
     const fact2 = document.getElementById('fact2');
     const fact3 = document.getElementById('fact3');
     const bars  = document.getElementById('bars');
-
-    // bar fills inside #bars
-    const fills = Array.from(document.querySelectorAll('#bars .bar-fill'));
+  
+    // Select green fills; fallback to .on if .bar-fill not present
+    const fills = Array.from(document.querySelectorAll('#bars .bar-fill, #bars .bar .on'));
     const targets = fills.map((el,i)=>{
       const t = parseFloat(el.getAttribute('data-target'));
-      if(!isNaN(t)) return Math.max(0, Math.min(1, t));
-      return i===0 ? 0.60 : 0.85;
+      if (!isNaN(t)) return Math.max(0, Math.min(1, t));
+      return i === 0 ? 0.60 : 0.85; // fallback
     });
-
+  
     const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
-    const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1.5); // 0..1 inside [a,b]
-    const show = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1.5-t)*12}px)`; };
-
+    const seg   = (p,a,b)=> clamp((p-a)/(b-a), 0, 1); // normalized 0..1 inside [a,b]
+    const show  = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1-t)*12}px)`; };
+  
+    // Timeline (shorter image holds + bars appear then fill, then hold)
     const TL = {
-      attEnd: 0.14,      // attentive hold ends (was 0.17)
-      xfadeEnd: 0.24,    // crossfade ends (was 0.27)
-      phonesEnd: 0.34,   // phones hold ends / stats start (was 0.44)
-    
-      fact1End: 0.34,    // keep relative spacing the same or tweak
-      fact2End: 0.44,
-      fact3End: 0.54,
-      barsAppearEnd: 0.66,
-      barsFillEnd: 0.88
+      attEnd:        0.14, // attentive hold ends
+      xfadeEnd:      0.24, // crossfade ends
+      phonesEnd:     0.34, // phones hold ends / stats start
+  
+      // make sure each end is strictly greater than the previous (avoid 0/0)
+      fact1End:      0.40, // first stat ends
+      fact2End:      0.50,
+      fact3End:      0.60,
+      barsAppearEnd: 0.72, // card fully visible, but green bars still 0%
+      barsFillEnd:   0.88, // green bars fill to target
+      // 0.88 → 1.00 = final hold on bars
     };
-
+  
     function onScroll(){
       const vh = innerHeight || document.documentElement.clientHeight;
       const rect = scrolly.getBoundingClientRect();
       const total = scrolly.offsetHeight - vh;
       const p = clamp((0 - rect.top) / total, 0, 1); // progress 0..1
-
-      /* TIMELINE
-         0.00–0.17  attentive hold (short)
-         0.17–0.27  crossfade to phones
-         0.27–0.44  phones hold (short)
-         0.44–0.56  stat1 (42%)
-         0.56–0.68  stat2 (–15 min)
-         0.68–0.80  stat3 (78%)
-         0.80–0.88  Bars card APPEAR (empty)
-         0.88–0.96  Bar FILLS grow 0→target
-         0.96–1.00  Final HOLD on bars
-      */
-
+  
+      /* Images */
       const aHold = (p <= TL.attEnd) ? 1 : (p >= TL.xfadeEnd ? 0 : 1 - seg(p, TL.attEnd, TL.xfadeEnd));
       const bFade = (p <= TL.attEnd) ? 0 : (p <= TL.xfadeEnd ? seg(p, TL.attEnd, TL.xfadeEnd) : 1);
-      
       f1.style.opacity = aHold.toFixed(3);
-      f2.style.opacity = bFade.toFixed(3);      
+      f2.style.opacity = bFade.toFixed(3);
+  
+      /* Dim background as stats begin */
       const dim = (p <= TL.phonesEnd) ? 0 : seg(p, TL.phonesEnd, TL.phonesEnd + 0.10);
       fog.style.background = `rgba(255,255,255,${(0.25*dim).toFixed(3)})`;
-
+  
+      /* Stats sequence */
       show(fact1, seg(p, TL.phonesEnd, TL.fact1End));
       show(fact2, seg(p, TL.fact1End, TL.fact2End));
       show(fact3, seg(p, TL.fact2End, TL.fact3End));
+  
+      /* Bars appear (empty), then fill, then hold */
       const barsAppear = seg(p, TL.fact3End, TL.barsAppearEnd);
       show(bars, barsAppear);
-      if (p >= TL.barsAppearEnd) show(bars, 1);
-      const fillT = seg(p, TL.barsAppearEnd, TL.barsFillEnd);
-
+      if (p >= TL.barsAppearEnd) show(bars, 1); // fully visible
+  
+      const fillT = seg(p, TL.barsAppearEnd, TL.barsFillEnd); // 0→1 over the fill segment
+      fills.forEach((el, i)=>{
+        const pct = (targets[i] * fillT * 100);
+        el.style.width = pct.toFixed(1) + '%';  // animate green width
+      });
     }
-
+  
     onScroll();
     addEventListener('scroll', onScroll, {passive:true});
     addEventListener('resize', onScroll, {passive:true});
   })();
+
 </script>
 </body>
 </html>
