@@ -380,16 +380,16 @@
 
       // stats sequence
       show(fact1, seg(p, 0.38, 0.56));
-      show(fact2, seg(p, 0.56, 0.68));
-      show(fact3, seg(p, 0.68, 0.80));
+      show(fact2, seg(p, 0.56, 0.74));
+      show(fact3, seg(p, 0.74, 0.92));
 
       // bars appear (empty), then fill, then hold
-      const barsAppear = seg(p, 0.80, 0.88);
+      const barsAppear = seg(p, 0.92, 1);
       show(bars, barsAppear);
-      if (p >= 0.88) show(bars, 1);
+      if (p >= 1) show(bars, 1.5);
 
-      const fillT = seg(p, 0.88, 0.96);
-      if (p < 0.88) {
+      const fillT = seg(p, 0.92, 1);
+      if (p < 0.92) {
         fills.forEach(el => el.style.transform = 'scaleX(0)');
       } else {
         fills.forEach((el,i)=>{
