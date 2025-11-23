@@ -85,8 +85,8 @@
   .fog{position:absolute; inset:0; background:rgba(255,255,255,.0); z-index:1; pointer-events:none}
 
   .issue-head{position:absolute; left:clamp(16px,4vw,40px); top:clamp(14px,4vh,32px); z-index:2; display:grid; gap:.6rem}
-  .issue-head h2{font-size:clamp(2rem,5vw,3.2rem); font-weight:800; margin:0}
-  .issue-head p{margin:0; font-weight:600; color:#2b2f2d; background:rgba(255,255,255,.8); border:1px solid var(--line); padding:.55rem .8rem; border-radius:12px; backdrop-filter:saturate(120%) blur(2px)}
+  .issue-head h2{font-size:clamp(2.4rem,6.2vw,3.6rem); font-weight:800; margin:0}
+  .issue-head p{margin:0; font-weight:600; color:#2b2f2d; background:rgba(255,255,255,.85); border:1px solid var(--line); padding:.55rem .8rem; border-radius:12px; backdrop-filter:saturate(120%) blur(2px)}
 
   .stats-wrap{position:absolute; inset:0; display:grid; place-items:center; z-index:3; pointer-events:none}
   .stats-grid{width:min(1120px,92vw); display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start}
@@ -95,10 +95,11 @@
   .kpi{font-weight:800; font-size:clamp(1.7rem,4vw,2.5rem); letter-spacing:-.01em}
   .bars-card{grid-column:1/4; opacity:0; transform:translateY(12px); transition:opacity .25s, transform .25s}
 
+  /* Bar chart that can fill from 0 → target */
   .bar-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; margin-bottom:.5rem; color:var(--muted)}
-  .bar{display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1}
-  .bar .on{background:var(--brand)}
-  .bar .off{background:#DDE4DF}
+  .bar-track{position:relative; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1}
+  #bars .bar-fill{position:absolute; inset:0 auto 0 0; width:100%; background:var(--brand); transform-origin:left center; transform:scaleX(0); transition:transform .001s}
+  .bar-meta{display:flex; justify-content:space-between; font-size:.9rem; color:var(--muted)}
 
   /* SOLUTION / HOW IT WORKS */
   .section{padding:5rem 0; position:relative}
@@ -182,7 +183,7 @@
         <p>Phones are crushing classroom focus. Here’s the scale — short and sharp.</p>
       </div>
 
-      <!-- stats overlay (revealed in sequence) -->
+      <!-- stats overlay (sequenced) -->
       <div class="stats-wrap">
         <div class="stats-grid">
           <div class="card fact" id="fact1">
@@ -198,20 +199,19 @@
             <p class="muted" style="margin:.35rem 0 0">teachers say phones directly reduce learning quality.</p>
           </div>
 
+          <!-- BARS: appear first empty, then fills animate in as you keep scrolling -->
           <div class="card bars-card" id="bars">
             <div class="bar-title"><span>Typical class</span><span>On-task vs. distracted</span></div>
-            <div class="bar" aria-label="Without TAPN" style="margin-bottom:.45rem">
-              <div class="on" style="width:60%"></div><div class="off" style="width:40%"></div>
+
+            <div class="bar-track" aria-label="Without TAPN" style="margin-bottom:.5rem">
+              <span class="bar-fill" data-target="0.60"></span>
             </div>
-            <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-bottom:.8rem">
-              <span>Without TAPN</span><span>60% / 40%</span>
+            <div class="bar-meta"><span>Without TAPN</span><span>60% / 40%</span></div>
+
+            <div class="bar-track" aria-label="With TAPN" style="margin-top:.8rem">
+              <span class="bar-fill" data-target="0.85"></span>
             </div>
-            <div class="bar" aria-label="With TAPN">
-              <div class="on" style="width:85%"></div><div class="off" style="width:15%"></div>
-            </div>
-            <div class="muted" style="display:flex; justify-content:space-between; font-size:.9rem; margin-top:.35rem">
-              <span>With TAPN</span><span>85% / 15%</span>
-            </div>
+            <div class="bar-meta"><span>With TAPN</span><span>85% / 15%</span></div>
           </div>
         </div>
       </div>
@@ -326,19 +326,29 @@
     setInterval(()=>{ s=Math.max(0,--s); const m=String((s/60|0)).padStart(2,'0'); const ss=String(s%60).padStart(2,'0'); t.textContent=`${m}:${ss}`; },1000);
   }
 
-  /* ====== SCROLLY LOGIC (shorter image holds + longer bars hold) ====== */
+  /* ====== SCROLLY LOGIC: images → stats → bars(appear empty → fill) → hold ====== */
   (function(){
     const scrolly = document.getElementById('scrolly');
     const f1 = document.getElementById('f1');    // attentive
     const f2 = document.getElementById('f2');    // phones
     const fog = document.getElementById('fog');
+
     const fact1 = document.getElementById('fact1');
     const fact2 = document.getElementById('fact2');
     const fact3 = document.getElementById('fact3');
     const bars  = document.getElementById('bars');
 
+    // bar fills inside #bars
+    const fills = Array.from(document.querySelectorAll('#bars .bar-fill'));
+    const targets = fills.map((el,i)=>{
+      const t = parseFloat(el.getAttribute('data-target'));
+      if(!isNaN(t)) return Math.max(0, Math.min(1, t));
+      return i===0 ? 0.60 : 0.85;
+    });
+
     const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
     const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1); // 0..1 inside [a,b]
+    const show = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1-t)*12}px)`; };
 
     function onScroll(){
       const vh = innerHeight || document.documentElement.clientHeight;
@@ -346,39 +356,52 @@
       const total = scrolly.offsetHeight - vh;
       const p = clamp((0 - rect.top) / total, 0, 1); // progress 0..1
 
-      /* New segment plan (slight tweaks):
-         0.00–0.17  attentive hold   (shorter)
-         0.17–0.27  crossfade
-         0.27–0.44  phones hold      (shorter, same as attentive)
+      /* TIMELINE
+         0.00–0.17  attentive hold (short)
+         0.17–0.27  crossfade to phones
+         0.27–0.44  phones hold (short)
          0.44–0.56  stat1 (42%)
          0.56–0.68  stat2 (–15 min)
          0.68–0.80  stat3 (78%)
-         0.80–0.92  bars reveal
-         0.92–1.00  bars HOLD (new, longer)
+         0.80–0.88  Bars card APPEAR (empty)
+         0.88–0.96  Bar FILLS grow 0→target
+         0.96–1.00  Final HOLD on bars
       */
 
-      // image opacities
+      // images
       const aHold = (p <= 0.17) ? 1 : (p >= 0.27 ? 0 : 1 - seg(p, 0.17, 0.27));
       const bFade = (p <= 0.17) ? 0 : (p <= 0.27 ? seg(p, 0.17, 0.27) : 1);
       f1.style.opacity = aHold.toFixed(3);
       f2.style.opacity = bFade.toFixed(3);
 
-      // slight dim once stats begin
+      // dim background once stats begin
       const dim = (p <= 0.44) ? 0 : seg(p, 0.44, 0.54);
       fog.style.background = `rgba(255,255,255,${(0.25*dim).toFixed(3)})`;
 
-      // sequential stats (equal duration)
-      const show = (el,t)=>{ el.style.opacity=t; el.style.transform=`translateY(${(1-t)*12}px)`; };
+      // stats sequence
       show(fact1, seg(p, 0.44, 0.56));
       show(fact2, seg(p, 0.56, 0.68));
       show(fact3, seg(p, 0.68, 0.80));
-      show(bars,  seg(p, 0.80, 0.92)); // then it holds 0.92→1.00
+
+      // bars appear (empty), then fill, then hold
+      const barsAppear = seg(p, 0.80, 0.88);
+      show(bars, barsAppear);
+      if (p >= 0.88) show(bars, 1);
+
+      const fillT = seg(p, 0.88, 0.96);
+      if (p < 0.88) {
+        fills.forEach(el => el.style.transform = 'scaleX(0)');
+      } else {
+        fills.forEach((el,i)=>{
+          el.style.transform = `scaleX(${(targets[i]*fillT).toFixed(4)})`;
+        });
+      }
     }
+
     onScroll();
     addEventListener('scroll', onScroll, {passive:true});
     addEventListener('resize', onScroll, {passive:true});
   })();
-
 </script>
 </body>
 </html>
