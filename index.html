@@ -15,10 +15,10 @@
 
 <style>
   :root{
-    --bg:#F7F8F4; --bg2:#EEF2EE;
-    --ink:#0F1B17; --muted:#5F6B66;
-    --panel:#FFFFFF; --line:#E5EAE5;
-    --brand:#29B087; --ring:rgba(41,176,135,.26);
+    --bg:#F7F8F4;     --bg2:#EEF2EE;
+    --ink:#0F1B17;    --muted:#5F6B66;
+    --panel:#FFFFFF;  --line:#E5EAE5;
+    --brand:#29B087;  --ring:rgba(41,176,135,.26);
     --radius:14px;
   }
 
@@ -29,7 +29,7 @@
     margin:0;
     font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
     color: var(--ink);
-    background-color: var(--bg);
+    background: var(--bg);
     background-image:
       radial-gradient(1200px 520px at 10% -12%, color-mix(in srgb, var(--brand) 6%, transparent), transparent 55%),
       radial-gradient(1200px 520px at 95% -18%, color-mix(in srgb, var(--bg2) 35%, transparent), transparent 60%);
@@ -37,11 +37,13 @@
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     line-height:1.6; letter-spacing:.005em;
-    position: relative; isolation:isolate;
+    position: relative; isolation: isolate;
+    transition: background-color .6s ease, color .4s ease, background-image .9s ease;
   }
-  /* gentle grain */
+
+  /* grain */
   body::before{
-    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    content:""; position: fixed; inset:0; pointer-events:none; z-index:0;
     opacity:.18; mix-blend-mode:multiply;
     background-image:
       url('assets/grain.png'),
@@ -52,7 +54,7 @@
   h1, h2, h3{ font-family: Manrope, "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial; letter-spacing:-.01em; }
   a{ color:inherit; text-decoration:none; }
   .container{ width:min(1120px, 92vw); margin:0 auto; position:relative; z-index:1; }
-  .narrow{ width:min(880px, 92vw); margin:0 auto; position:relative; z-index:1; }
+  .narrow{ width:min(880px, 92vw);  margin:0 auto; position:relative; z-index:1; }
   .muted{ color:var(--muted); }
 
   /* NAV */
@@ -76,7 +78,7 @@
   .btn.ghost{ color:var(--ink); background:transparent; border-color:var(--line); }
 
   /* HERO */
-  .hero{ padding:9rem 0 5rem; position:relative; overflow:clip; }
+  .hero{ padding: 9rem 0 5rem; position:relative; overflow:clip; }
   .h1{ font-size: clamp(2.6rem, 5.6vw, 5rem); line-height:1.02; margin:0 0 1rem; font-weight:800; }
   .lead{ color:var(--muted); font-size: clamp(1rem, 2.1vw, 1.1rem); margin:0; }
   .hero-cta{ display:flex; gap:.8rem; align-items:center; margin-top:1.4rem; }
@@ -85,78 +87,94 @@
   .rotator span{ grid-area:1/1; opacity:0; transform:translateY(8px); transition:opacity .6s ease, transform .6s ease; }
   .rotator span.in{ opacity:1; transform:translateY(0); }
 
-  .preview{ margin-top:3rem; display:grid; grid-template-columns: 1.05fr .95fr; gap:2rem; align-items:center; }
-  .phone{ background:var(--panel); border:1px solid var(--line); border-radius: var(--radius); padding:1rem; aspect-ratio:4/3; }
+  .preview{ margin-top: 3rem; display:grid; grid-template-columns: 1.05fr .95fr; gap: 2rem; align-items:center; }
+  .phone{ background:var(--panel); border:1px solid var(--line); border-radius: var(--radius); padding:1rem; aspect-ratio: 4/3; will-change: transform; }
   .row{ display:flex; align-items:center; justify-content:space-between; padding:.7rem .85rem; border:1px solid var(--line); border-radius:10px; }
   .row + .row{ margin-top:.7rem; }
   .pill{ padding:.25rem .55rem; border-radius:999px; border:1px solid var(--line); font-size:.82rem; }
 
-  /* Sections */
   .section{ padding:5rem 0; position:relative; }
-  .section h2{ font-size: clamp(2rem, 4vw, 3rem); margin:0 0 .8rem; font-weight:800; }
+  .section h2{ font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin:0 0 .8rem; font-weight:800; }
   .hairline{ border-top:1px solid var(--line); }
 
-  .cards{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
-  .card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1rem; }
-  .card h3{ font-size:1.08rem; margin:.2rem 0 .3rem; display:flex; align-items:center; gap:.5rem; font-weight:700; }
-  .steps{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
-  .step{ border:1px solid var(--line); border-radius:12px; padding:1rem; background:var(--panel); }
-  .num{ width:24px; height:24px; border-radius:50%; display:inline-grid; place-items:center; border:1px solid var(--line); font-size:.85rem; margin-right:.5rem; }
+  /* ===== PROBLEM - Pinned scrollytelling scene ===== */
+  #problem{ padding:0; }
+  .scene{ height: 280vh; /* total scroll budget for the scene */ }
+  .pin{
+    position: sticky; top: 0; height: 100vh; overflow:hidden;
+    background: var(--bg);
+  }
+  .frame{
+    position:absolute; inset:0; display:grid; place-items:center;
+    will-change:opacity, transform;
+  }
+  .frame img{
+    width: min(1400px, 100vw);
+    height: 100vh; /* keep full height in view */
+    object-fit: contain;         /* no cropping */
+    object-position: center center;
+    user-select:none; pointer-events:none;
+    transform: translateZ(0);    /* helps some GPUs */
+  }
 
-  /* Stats block */
-  .stats{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
-  .stat{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.1rem; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease; }
-  .stat.in{ opacity:1; transform:none; }
-  .kpi{ font-weight:800; font-size: clamp(1.7rem, 4vw, 2.5rem); letter-spacing:-.01em; }
-  .stat p{ margin:.3rem 0 0; color:var(--muted); }
+  /* headline overlay (always visible) */
+  .issue-head{
+    position:absolute; left:min(4vw, 48px); top:min(7vh, 80px); z-index:2;
+    display:grid; gap:.4rem;
+    max-width:min(780px, 90vw);
+    padding:.6rem .9rem;
+    border-radius:12px;
+    backdrop-filter: blur(2px);
+    background: color-mix(in srgb, var(--panel) 72%, transparent);
+  }
+  .issue-head h2{
+    margin:0; font-weight:800;
+    font-size: clamp(2.2rem, 4.6vw, 3.2rem); line-height:1.05; letter-spacing:-.01em;
+  }
+  .issue-head p{ margin:0; color:var(--muted); font-size: clamp(1rem, 2vw, 1.125rem); }
 
-  .bars{ display:grid; gap:.6rem; margin-top:1rem; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease; }
-  .bars.in{ opacity:1; transform:none; }
+  /* stats overlay (appears after images) */
+  .stats-overlay{
+    position:absolute; inset:0; display:grid; place-items:center; z-index:3;
+    pointer-events:none; /* purely visual overlay */
+  }
+  .stats-wrap{
+    width:min(1120px, 92vw);
+    display:grid; gap:1rem;
+  }
+  .stats-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem;
+  }
+  .stat-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.2rem 1.2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.04);
+    transform: translateY(16px); opacity:0;
+    transition: transform .6s cubic-bezier(.2,.65,.2,1), opacity .6s ease;
+  }
+  .stat-card.in{ transform:none; opacity:1; }
+  .kpi{ font-weight:800; font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing:-.01em; }
+  .stat-card p{ margin:.35rem 0 0; color:var(--muted); }
+
+  .bars-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:1.1rem;
+    transform: translateY(16px); opacity:0; transition: transform .6s cubic-bezier(.2,.65,.2,1), opacity .6s ease;
+  }
+  .bars-card.in{ transform:none; opacity:1; }
+  .bar-label{ display:flex; justify-content:space-between; font-size:.9rem; color:var(--muted); }
+  .bars{ display:grid; gap:.6rem; margin-top:.6rem; }
   .bar{ display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); background:#F1F4F1; }
   .seg-on{ background:var(--brand); }
   .seg-off{ background:#DDE4DF; }
-  .bar-label{ display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); }
 
-  /* ---------- PROBLEM: pinned scrollytelling ---------- */
-  #problem{ padding:0; }
-  .scrolly{ position:relative; height:220vh; }          /* scroll room */
-  .sticky{ position:sticky; top:0; height:100vh; overflow:hidden; }
-  .scene{ position:absolute; inset:0; background:color-mix(in srgb, var(--bg) 70%, transparent); }
-  .scene-img{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    max-width:min(1400px, 100vw);
-    max-height:100vh; width:auto; height:auto;
-    object-fit:contain; filter:contrast(1) saturate(.95);
-    transition:opacity .5s ease, filter .5s ease;
-  }
-  .scene-img.attentive{ opacity:1; }
-  .scene-img.phones{ opacity:0; }
-
-  .overlay{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; }
-  .overlay-inner{ width:min(1100px, 92vw); margin:auto; }
-  .problem-head{
-    display:inline-block; padding:.6rem .9rem; margin-bottom:.6rem; border-radius:12px;
-    background: rgba(255,255,255,.6); backdrop-filter: blur(4px);
-    box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 0 0 1px var(--line);
-  }
-  .problem-sub{ margin:.3rem 0 1rem; color:#30413B; text-wrap:balance; }
-  .problem-sub strong{ font-weight:600; }
-  .title-row{ display:flex; align-items:end; gap:.8rem; }
-  .title-row h2{ margin:.2rem 0 0; }
-  .overlay h2, .overlay p{ text-shadow: 0 1px 0 rgba(255,255,255,.65); }
-
-  /* reveal timing containers */
-  .head-reveal{ opacity:0; transform:translateY(10px); transition:opacity .45s ease, transform .45s ease; }
-  .head-reveal.in{ opacity:1; transform:none; }
-  /* Mobile */
+  /* MOBILE tweaks */
   @media (max-width: 900px){
     .nav-links{ display:none; }
     .preview{ grid-template-columns: 1fr; }
-    .stats, .cards, .steps{ grid-template-columns: 1fr; }
-    .hero{ padding: 7rem 0 3.5rem; }
+    .stats-grid{ grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
+    .stat-card, .bars-card{ transition:none !important; transform:none !important; opacity:1 !important; }
   }
 </style>
 </head>
@@ -181,11 +199,7 @@
     <span class="kicker">Tap-to-focus</span>
     <h1 class="h1">
       help students with
-      <span class="rotator" id="rot">
-        <span class="in">focus</span>
-        <span>learning</span>
-        <span>one tap</span>
-      </span>
+      <span class="rotator" id="rot"><span class="in">focus</span><span>learning</span><span>one tap</span></span>
     </h1>
     <p class="lead">Tap in at the door. Class Mode turns on. Attendance logs automatically.</p>
     <div class="hero-cta">
@@ -210,62 +224,62 @@
 
 <div class="hairline"></div>
 
-<!-- PROBLEM (pinned scene + staged reveals) -->
-<section id="problem" class="section" data-theme="tone2">
-  <div class="scrolly">
-    <div class="sticky">
-      <div class="scene" aria-hidden="true">
-        <img class="scene-img attentive" src="assets/classroom-attentive.jpg" alt="Students attentive in class">
-        <img class="scene-img phones"    src="assets/classroom-phones.jpg" alt="Many students looking down at phones">
+<!-- ===== PROBLEM (pinned scene + staged stats) ===== -->
+<section id="problem" data-theme="tone2">
+  <div class="scene" id="classroomScene">
+    <div class="pin" id="pin">
+      <!-- headline -->
+      <div class="issue-head">
+        <h2>The issue</h2>
+        <p>Phones are crushing classroom focus. Here’s the scale — short and sharp.</p>
       </div>
 
-      <div class="overlay">
-        <div class="overlay-inner">
-          <div class="head-reveal" id="headBlock">
-            <div class="problem-head">
-              <div class="title-row">
-                <h2>The issue</h2>
-              </div>
-              <p class="problem-sub">Phones are crushing classroom focus. <strong>Here’s the scale — short and sharp.</strong></p>
-            </div>
-          </div>
+      <!-- frames -->
+      <div class="frame" id="f1" style="opacity:1;">
+        <img src="assets/classroom-attentive.jpg" alt="Classroom, students attentive to the teacher">
+      </div>
+      <div class="frame" id="f2" style="opacity:0;">
+        <img src="assets/classroom-phones.jpg" alt="Classroom, several students looking down at phones">
+      </div>
 
-          <div class="stats" id="statsBlock">
-            <div class="stat" data-step="1">
+      <!-- stats overlay (revealed after crossfade) -->
+      <div class="stats-overlay" id="statsOverlay" style="opacity:0;">
+        <div class="stats-wrap">
+          <div class="stats-grid">
+            <div class="stat-card" data-step="1">
               <div class="kpi"><span class="count" data-count="42">0</span>%</div>
               <p>of class time risks going off-task on devices.</p>
             </div>
-            <div class="stat" data-step="2">
+            <div class="stat-card" data-step="2">
               <div class="kpi">−<span class="count" data-count="15">0</span> min</div>
               <p>lost per 50-minute class to phone distractions.</p>
             </div>
-            <div class="stat" data-step="3">
+            <div class="stat-card" data-step="3">
               <div class="kpi"><span class="count" data-count="78">0</span>%</div>
               <p>teachers say phones directly reduce learning quality.</p>
             </div>
           </div>
 
-          <div class="card bars" id="barsBlock" aria-label="On-task vs. distracted comparison">
+          <div class="bars-card" data-step="4">
             <div class="bar-label"><span>Typical class</span><span>On-task vs. distracted</span></div>
+            <div class="bars">
+              <div class="bar" aria-label="Without TAPN">
+                <div class="seg-on" style="width:60%"></div>
+                <div class="seg-off" style="width:40%"></div>
+              </div>
+              <div class="bar-label"><span>Without TAPN</span><span>60% / 40%</span></div>
 
-            <div class="bar" aria-label="Without TAPN">
-              <div class="seg-on" style="width:60%"></div>
-              <div class="seg-off" style="width:40%"></div>
+              <div class="bar" aria-label="With TAPN">
+                <div class="seg-on" style="width:85%"></div>
+                <div class="seg-off" style="width:15%"></div>
+              </div>
+              <div class="bar-label"><span>With TAPN</span><span>85% / 15%</span></div>
             </div>
-            <div class="bar-label"><span>Without TAPN</span><span>60% / 40%</span></div>
-
-            <div class="bar" aria-label="With TAPN">
-              <div class="seg-on" style="width:85%"></div>
-              <div class="seg-off" style="width:15%"></div>
-            </div>
-            <div class="bar-label"><span>With TAPN</span><span>85% / 15%</span></div>
           </div>
         </div>
       </div>
+      <!-- /stats overlay -->
     </div>
-
-    <!-- spacer that controls how long the scene is pinned -->
-    <div style="height:120vh"></div>
   </div>
 </section>
 
@@ -324,6 +338,25 @@
 
 <div class="hairline"></div>
 
+<!-- FAQ -->
+<section id="faq" class="section narrow" data-theme="tone4">
+  <h2>FAQ</h2>
+  <details>
+    <summary>Does TAPN read student content?</summary>
+    <p class="muted">No. TAPN only manages policy state (which apps are allowed) and timestamps. We don’t capture messages, browsing, or photos.</p>
+  </details>
+  <details>
+    <summary>What phones are supported?</summary>
+    <p class="muted">iOS and Android. Students install a lightweight companion app that listens for the tap-in signal and applies school policies.</p>
+  </details>
+  <details>
+    <summary>What if a student doesn’t tap in?</summary>
+    <p class="muted">Attendance won’t log for that student. Schools can require tap-in for attendance or network access.</p>
+  </details>
+</section>
+
+<div class="hairline"></div>
+
 <!-- WAITLIST -->
 <section id="waitlist" class="section narrow" data-theme="tone3">
   <h2>Join the pilot</h2>
@@ -372,18 +405,20 @@
   document.getElementById('y').textContent = new Date().getFullYear();
 
   // word rotator
-  const rot = document.getElementById('rot');
-  if (rot && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  (function(){
+    const rot = document.getElementById('rot');
+    if (!rot || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const nodes = [...rot.querySelectorAll('span')];
     let i = 0;
     setInterval(()=>{ nodes[i].classList.remove('in'); i=(i+1)%nodes.length; nodes[i].classList.add('in'); }, 2400);
-  }
+  })();
 
   // tiny parallax for hero phone
-  const phone = document.getElementById('heroPhone');
-  if (phone){
+  (function(){
+    const phone = document.getElementById('heroPhone');
+    if(!phone) return;
     let ticking=false;
-    window.addEventListener('scroll', ()=>{
+    addEventListener('scroll', ()=>{
       if(ticking) return; ticking=true;
       requestAnimationFrame(()=>{
         const r = phone.getBoundingClientRect();
@@ -394,83 +429,101 @@
         ticking=false;
       });
     }, {passive:true});
-  }
+  })();
 
   // timer demo
-  const tm = document.getElementById('demoTimer');
-  if (tm){
-    let s = 50*60;
-    setInterval(()=>{
-      s = Math.max(0, s-1);
-      const m  = String(Math.floor(s/60)).padStart(2,'0');
-      const ss = String(s%60).padStart(2,'0');
-      tm.textContent = `${m}:${ss}`;
-    }, 1000);
-  }
-
-  // ===== Scrollytelling for #problem =====
   (function(){
-    const scrolly = document.querySelector('#problem .scrolly');
-    const sticky  = document.querySelector('#problem .sticky');
-    const imgUp   = document.querySelector('.scene-img.attentive');
-    const imgDn   = document.querySelector('.scene-img.phones');
+    const t = document.getElementById('demoTimer');
+    if(!t) return;
+    let s = 50*60;
+    setInterval(()=>{ s=Math.max(0,--s);
+      t.textContent = String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+    },1000);
+  })();
 
-    const head    = document.getElementById('headBlock');
-    const stats   = [...document.querySelectorAll('#statsBlock .stat')];
-    const bars    = document.getElementById('barsBlock');
-    const counters= document.querySelectorAll('.count');
+  /* ===== Scrollytelling engine for the classroom frames =====
+     p = 0..1 as you scroll the scene.
+     Hold 1st frame fully until HOLD1, then crossfade to HOLD2, then show frame 2.
+     After STAT_START, reveal stats piece-by-piece.
+  */
+  (function(){
+    const scene = document.getElementById('classroomScene');
+    const pin   = document.getElementById('pin');
+    const f1    = document.getElementById('f1');
+    const f2    = document.getElementById('f2');
+    const overlay = document.getElementById('statsOverlay');
+    const steps = [...document.querySelectorAll('[data-step]')];
+    const counters = [...document.querySelectorAll('.count')];
 
-    // staged thresholds (0..1 over the pinned scene)
-    const TH = {
-      head: 0.68,      // show title/sub after the visualization
-      s1:   0.76,
-      s2:   0.84,
-      s3:   0.92,
-      bars: 0.97
-    };
+    // tune these to match the "good scrolling" feel
+    const HOLD1 = 0.62;     // keep first image fully on screen until 62% of the scene
+    const HOLD2 = 0.78;     // crossfade ends by 78%
+    const STAT_START = 0.82;// stats begin appearing
+    let countersStarted = false;
 
-    // counter helper
-    function animateCount(el, end){
-      const duration = 900;
-      const startTime = performance.now();
-      function tick(now){
-        const t = Math.min(1, (now - startTime)/duration);
-        const val = Math.floor(end * (t*t*(3-2*t)));
-        el.textContent = val;
-        if(t < 1) requestAnimationFrame(tick);
+    function progress(){
+      const rect = scene.getBoundingClientRect();
+      const vh = innerHeight || document.documentElement.clientHeight;
+      const total = rect.height - vh;                   // scrollable distance while pinned
+      const passed = Math.min(Math.max(-rect.top, 0), total);
+      return total <= 0 ? 0 : passed / total;           // 0..1
+    }
+
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+
+    function onScroll(){
+      const p = progress();
+
+      // crossfade logic
+      if(p < HOLD1){
+        f1.style.opacity = 1;
+        f2.style.opacity = 0;
+      }else if(p > HOLD2){
+        f1.style.opacity = 0;
+        f2.style.opacity = 1;
+      }else{
+        const t = (p - HOLD1) / (HOLD2 - HOLD1); // 0..1
+        f1.style.opacity = (1 - t).toFixed(3);
+        f2.style.opacity = t.toFixed(3);
       }
-      requestAnimationFrame(tick);
+
+      // stats overlay visibility
+      const s = clamp01((p - STAT_START) / (1 - STAT_START)); // 0..1 after STAT_START
+      overlay.style.opacity = (s>0 ? lerp(0,1,s) : 0);
+      // dim frames a touch while stats are up
+      const dim = s>0 ? lerp(1, .65, s) : 1;
+      f1.style.filter = `opacity(${dim})`;
+      f2.style.filter = `opacity(${dim})`;
+
+      // stepwise reveals
+      // thresholds for 4 elements, staggered across s in [0..1]
+      const thresholds = [0.05, 0.25, 0.45, 0.65];
+      steps.forEach((el, i)=>{
+        if(s >= thresholds[i]) el.classList.add('in');
+        else el.classList.remove('in');
+      });
+
+      // animate counters once
+      if(!countersStarted && s > thresholds[0]){
+        countersStarted = true;
+        counters.forEach(el=>{
+          const end = Number(el.dataset.count||'0');
+          const duration = 1200;
+          const start = performance.now();
+          function tick(now){
+            const t = Math.min(1,(now-start)/duration);
+            el.textContent = Math.floor(end*(t*t*(3-2*t)));
+            if(t<1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        });
+      }
     }
 
-    let shown = {head:false, s1:false, s2:false, s3:false, bars:false};
-
-    function frame(){
-      const rect = scrolly.getBoundingClientRect();
-      const h = window.innerHeight || document.documentElement.clientHeight;
-      // progress across sticky region (0 when top enters, 1 when bottom leaves)
-      const p = Math.min(1, Math.max(0, (h - rect.top) / (rect.height)));
-
-      // cross-fade attentive -> phones between ~0.20..0.65
-      const fadeStart = 0.20, fadeEnd = 0.65;
-      const t = Math.min(1, Math.max(0, (p - fadeStart) / (fadeEnd - fadeStart)));
-      imgUp.style.opacity = (1 - t).toFixed(3);
-      imgDn.style.opacity = t.toFixed(3);
-
-      // step reveals driven by progress (no timers)
-      if (!shown.head && p > TH.head){ head.classList.add('in'); shown.head=true; }
-      if (!shown.s1   && p > TH.s1 ){ stats[0].classList.add('in'); animateCount(stats[0].querySelector('.count'), Number(stats[0].querySelector('.count').dataset.count||0)); shown.s1=true; }
-      if (!shown.s2   && p > TH.s2 ){ stats[1].classList.add('in'); animateCount(stats[1].querySelector('.count'), Number(stats[1].querySelector('.count').dataset.count||0)); shown.s2=true; }
-      if (!shown.s3   && p > TH.s3 ){ stats[2].classList.add('in'); animateCount(stats[2].querySelector('.count'), Number(stats[2].querySelector('.count').dataset.count||0)); shown.s3=true; }
-      if (!shown.bars && p > TH.bars){ bars.classList.add('in'); shown.bars=true; }
-
-      requestAnimationFrame(()=>{}); // keep it smooth
-    }
-    // init states
-    head.classList.remove('in'); stats.forEach(s=>s.classList.remove('in')); bars.classList.remove('in');
-
-    window.addEventListener('scroll', frame, {passive:true});
-    window.addEventListener('resize', frame, {passive:true});
-    frame();
+    addEventListener('scroll', onScroll, {passive:true});
+    addEventListener('resize', onScroll, {passive:true});
+    onScroll();
   })();
 </script>
 </body>
